@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ivan — a letter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Pinyon+Script&family=EB+Garamond:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:      #0a0c0e;
+    --navy-900:   #10161d;
+    --navy-800:   #182029;
+    --navy-700:   #232d38;
+    --line:       #2c3742;
+    --slate:      #71818f;
+    --white:      #edf0f2;
+    --white-dim:  #b7c0c8;
+    --glow:       #2e4258;
+    /* muted parchment tones — used only as thin "page edge" slivers behind the
+       active letter, so the stack reads like real paper without breaking the
+       night palette */
+    --paper-1:    #d8d2c1;
+    --paper-2:    #c7c0ac;
+    --paper-3:    #b6ae98;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--black);
+    color:var(--white-dim);
+    font-family:'EB Garamond', serif;
+    font-size:18px;
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--navy-700); color:var(--white); }
+  a{ color:inherit; }
+
+  .grain{
+    position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* a very faint linen weave, sitting under the grain — adds texture to the
+     black background without reading as busy or patterned up close */
+  .weave{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(237,240,242,.5) 0 1px, transparent 1px 6px),
+      repeating-linear-gradient(-45deg, rgba(237,240,242,.5) 0 1px, transparent 1px 6px);
+  }
+  /* soft vignette to draw the eye inward on wide screens */
+  .vignette{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.55) 100%);
+  }
+
+  /* ================= ENTRANCE ================= */
+  #gate{
+    position:fixed; inset:0; z-index:100; background:var(--black);
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity 1s ease .05s, visibility 1s ease .05s, transform 1s ease .05s;
+    transform:scale(1);
+  }
+  #gate.hidden{ opacity:0; visibility:hidden; transform:scale(1.06); }
+
+  .scene{ position:relative; width:220px; height:260px; cursor:pointer; }
+
+  .prompt{
+    position:absolute; bottom:-46px; left:50%; transform:translateX(-50%);
+    font-family:'Special Elite', monospace; font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--slate); white-space:nowrap; transition:color .4s ease, opacity .3s ease;
+  }
+  .scene:hover .prompt{ color:var(--white-dim); }
+  .scene.busy .prompt{ opacity:0; }
+
+  .envelope{ position:absolute; left:20px; bottom:60px; width:180px; height:118px; }
+  .env-body{ position:absolute; inset:0; background:linear-gradient(180deg,#151d25,#0e1319); border:1px solid var(--line); }
+  .env-flap{
+    position:absolute; top:0; left:0; width:100%; height:60px;
+    background:linear-gradient(160deg,#1a232c,#111820);
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+    transform-origin:top center;
+    transition:transform 1s cubic-bezier(.6,0,.25,1);
+    border-bottom:1px solid var(--line);
+  }
+  .scene.open .env-flap{ transform:rotateX(180deg); }
+
+  .seal{
+    position:absolute; top:44px; left:50%; transform:translateX(-50%);
+    width:30px; height:30px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #3a4b5a, #202b35 70%, #10161d 100%);
+    box-shadow:0 2px 8px rgba(0,0,0,.6);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-size:13px; color:var(--white-dim);
+    transition:opacity .6s ease, transform .6s ease; z-index:3;
+  }
+  .scene.open .seal{ opacity:0; transform:translateX(-50%) scale(.5); }
+
+  .paper{
+    position:absolute; left:28px; bottom:64px; width:164px; height:100px;
+    background:linear-gradient(180deg,#161f28,#101720);
+    border:1px solid var(--line);
+    box-shadow:0 6px 18px rgba(0,0,0,.5);
+    z-index:2;
+    transform:translateY(6px);
+    transition:transform 1.1s cubic-bezier(.5,0,.2,1) .1s;
+  }
+  .paper .lines{ position:absolute; inset:16px 14px; }
+  .paper .lines span{
+    display:block; height:1px; background:var(--line); margin-bottom:12px;
+    opacity:0; transform:translateY(4px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .paper .lines span:nth-child(1){ width:70%; }
+  .paper .lines span:nth-child(2){ width:90%; }
+  .paper .lines span:nth-child(3){ width:55%; }
+  .scene.out .paper{ transform:translateY(-90px); }
+  .scene.out .paper .lines span{ opacity:.85; transform:translateY(0); }
+  .scene.out .paper .lines span:nth-child(1){ transition-delay:.15s; }
+  .scene.out .paper .lines span:nth-child(2){ transition-delay:.3s; }
+  .scene.out .paper .lines span:nth-child(3){ transition-delay:.45s; }
+
+  /* ================= letter page ================= */
+  .letter-page{ position:relative; }
+  .floral{ color:var(--white); }
+
+  .glow{
+    position:absolute; width:420px; height:420px; border-radius:50%;
+    background:radial-gradient(circle, var(--glow) 0%, transparent 70%);
+    filter:blur(30px); opacity:.35; pointer-events:none; z-index:0;
+  }
+
+  /* ---------------- hero: two-column ---------------- */
+  .hero{ position:relative; padding:110px 24px 70px; }
+  .hero .glow{ top:20%; left:8%; }
+  .hero-grid{
+    max-width:680px; margin:0 auto; display:grid;
+    grid-template-columns:220px 1fr; gap:56px; align-items:center;
+    position:relative; z-index:1;
+  }
+  .hero .flourish{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:300;
+    font-size:17px; color:var(--slate); max-width:32ch; margin-bottom:18px; line-height:1.5;
+  }
+  .hero .name{
+    font-family:'Pinyon Script', cursive; font-size:clamp(56px,9vw,96px); color:var(--white);
+    line-height:1; margin-bottom:6px;
+  }
+  .name-flourish{ display:flex; margin-bottom:20px; opacity:.55; }
+  .name-flourish svg{ width:130px; height:16px; }
+  .hero-para{
+    font-family:'Times New Roman', Times, serif; font-stretch:condensed;
+    font-size:16px; color:var(--white-dim); max-width:42ch; line-height:1.6; margin-bottom:22px;
+  }
+
+  .hero-nav{ display:flex; flex-wrap:wrap; align-items:center; gap:26px; padding-top:20px; border-top:1px solid var(--line); }
+  .nav-dot{ position:relative; text-decoration:none; display:flex; align-items:center; justify-content:center; min-width:20px; height:20px; }
+  .nav-dot .mark{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; letter-spacing:.02em; color:var(--slate); transition:color .35s ease; white-space:nowrap; }
+  .nav-dot:hover .mark, .nav-dot.active .mark, .nav-dot.current .mark{ color:var(--white); }
+  .nav-dot.current::after{
+    content:""; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
+    width:4px; height:4px; border-radius:50%; background:var(--white);
+  }
+  .nav-pop{
+    position:absolute; top:-32px; left:50%; transform:translateX(-50%) translateY(4px);
+    font-family:'Special Elite', monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--white); background:var(--navy-800); border:1px solid var(--line);
+    padding:6px 10px; white-space:nowrap; opacity:0; visibility:hidden;
+    transition:opacity .3s ease, transform .3s ease, visibility .3s ease; pointer-events:none;
+  }
+  .nav-dot.active .nav-pop{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+  .nav-dot.nav-external:hover .nav-pop{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+
+  .frame{ width:100%; max-width:220px; padding:9px; background:linear-gradient(160deg,#2a3540,#161d24 55%,#232d38); box-shadow:0 10px 30px rgba(0,0,0,.55); position:relative; }
+  /* outer corner brackets */
+  .frame::before, .frame::after{
+    content:""; position:absolute; width:16px; height:16px; border:1px solid rgba(237,240,242,.4); pointer-events:none;
+  }
+  .frame::before{ top:-6px; left:-6px; border-right:none; border-bottom:none; }
+  .frame::after{ bottom:-6px; right:-6px; border-left:none; border-top:none; }
+  .frame-inner{
+    background:linear-gradient(150deg,#141b23,#0c1116); border:1px solid var(--line);
+    aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  /* inner corner brackets, offset from the outer pair for a layered, engraved feel */
+  .frame-inner::before, .frame-inner::after{
+    content:""; position:absolute; width:12px; height:12px; border:1px solid rgba(237,240,242,.22); pointer-events:none;
+  }
+  .frame-inner::before{ top:6px; right:6px; border-left:none; border-bottom:none; }
+  .frame-inner::after{ bottom:6px; left:6px; border-right:none; border-top:none; }
+  .frame-inner span{ font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--slate); text-align:center; padding:0 16px; }
+  .frame-inner img{ width:100%; height:100%; object-fit:cover; }
+  .caption{ margin-top:14px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; color:var(--slate); }
+
+  /* ---------------- panel (a stack of letters, one on top at a time) ---------------- */
+  .panel{
+    display:none; position:relative; padding:26px 24px 60px;
+  }
+  .panel.open{ display:block; animation:panelFade .5s ease; }
+  @keyframes panelFade{ from{ opacity:0; } to{ opacity:1; } }
+
+  /* the stack — a fixed-height frame; each letter's writing scrolls inside
+     its own card rather than growing the page forever */
+  .stack{ position:relative; max-width:520px; margin:0 auto; height:min(720px,80vh); }
+
+  /* every section is a "letter" card in the stack. only stack="0" (on top)
+     shows its writing — the rest sit turned and pushed back and down, with
+     only a pale paper edge peeking out, like a hand of letters fanned
+     underneath the one being read */
+  section.acc{
+    position:absolute; inset:0; padding:34px 30px 30px;
+    background:linear-gradient(165deg,#1a232c,#121920 60%,#0e141a);
+    border:1px solid var(--line); box-shadow:0 18px 40px rgba(0,0,0,.55);
+    transition:transform .55s cubic-bezier(.33,.1,.2,1), box-shadow .5s ease;
+    transform-origin:50% 100%; overflow:hidden;
+  }
+  section.acc::after{
+    /* the pale paper edge — invisible on the active letter, a sliver of
+       parchment showing through on the ones stacked behind it */
+    content:""; position:absolute; inset:0; opacity:0;
+    transition:opacity .5s ease; pointer-events:none;
+  }
+  section.acc[data-stack="0"]{ transform:translate(0,0) rotate(0deg) scale(1); z-index:5; }
+  section.acc[data-stack="1"]{ transform:translate(14px,20px) rotate(1.4deg) scale(.975); z-index:4; }
+  section.acc[data-stack="2"]{ transform:translate(24px,36px) rotate(-1.8deg) scale(.95); z-index:3; }
+  section.acc[data-stack="3"]{ transform:translate(32px,50px) rotate(2.1deg) scale(.925); z-index:2; }
+  section.acc[data-stack="4"]{ transform:translate(38px,62px) rotate(-1.3deg) scale(.9); z-index:1; }
+  section.acc[data-stack="1"]::after{ opacity:.06; background:var(--paper-1); }
+  section.acc[data-stack="2"]::after{ opacity:.1; background:var(--paper-2); }
+  section.acc[data-stack="3"]::after{ opacity:.14; background:var(--paper-2); }
+  section.acc[data-stack="4"]::after{ opacity:.18; background:var(--paper-3); }
+
+  /* only the top letter's writing is legible; the ones behind fade their
+     content so what shows through is just the plain paper of the page */
+  section.acc[data-stack="0"] .acc-wrap{ opacity:1; pointer-events:auto; transition:opacity .3s ease .15s; }
+  section.acc:not([data-stack="0"]) .acc-wrap{ opacity:0; pointer-events:none; transition:opacity .2s ease; }
+
+  .acc-wrap{ max-width:580px; margin:0 auto; position:relative; z-index:1; height:100%; }
+
+  /* the letter's writing scrolls inside its own card; the close button and
+     corner arrow stay fixed in place regardless of scroll position */
+  .acc-scroll{
+    height:100%; overflow-y:auto; padding-right:10px; padding-top:2px;
+    scrollbar-width:thin; scrollbar-color:var(--line) transparent;
+  }
+  .acc-scroll::-webkit-scrollbar{ width:5px; }
+  .acc-scroll::-webkit-scrollbar-track{ background:transparent; }
+  .acc-scroll::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
+  .acc-scroll::-webkit-scrollbar-thumb:hover{ background:var(--slate); }
+
+  /* the corner arrow belongs to the card itself (not the text column) so it
+     sits flush at the physical corner of the letter; only the top letter's
+     is interactive or visible */
+  section.acc:not([data-stack="0"]) .corner-turn,
+  section.acc:not([data-stack="0"]) .corner-label{ opacity:0; pointer-events:none; }
+  section.acc[data-stack="0"] .corner-turn,
+  section.acc[data-stack="0"] .corner-label{ transition:opacity .3s ease .15s; }
+
+  .acc-close{
+    position:absolute; top:-6px; right:-8px; background:none; border:none; cursor:pointer;
+    color:var(--slate); font-family:'Cormorant Garamond', serif; font-size:22px; line-height:1;
+    padding:6px 8px; transition:color .3s ease; z-index:2;
+  }
+  .acc-close:hover{ color:var(--white); }
+
+  /* the corner arrow — a small folded page-corner at the foot of the active
+     letter; tap it to bring the next one to the top of the stack */
+  .corner-turn{
+    position:absolute; right:0; bottom:0; width:54px; height:54px; z-index:6;
+    display:flex; align-items:flex-end; justify-content:flex-end; cursor:pointer;
+    background:linear-gradient(135deg, transparent 50%, var(--navy-700) 50.5%);
+    border-top:1px solid var(--line); border-left:1px solid var(--line);
+    transition:background .3s ease;
+  }
+  .corner-turn:hover{ background:linear-gradient(135deg, transparent 50%, var(--glow) 50.5%); }
+  .corner-turn .arrow{
+    font-family:'Cormorant Garamond', serif; font-size:20px; color:var(--white-dim);
+    margin:0 8px 6px 0; transition:transform .3s ease, color .3s ease; pointer-events:none;
+  }
+  .corner-turn:hover .arrow{ transform:translate(3px,-3px); color:var(--white); }
+  .corner-label{
+    position:absolute; right:14px; bottom:16px; z-index:6;
+    font-family:'Special Elite', monospace; font-size:8px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--slate); white-space:nowrap; opacity:.7; pointer-events:none;
+  }
+
+  .acc-header{
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
+    padding:0 0 4px; margin-bottom:4px;
+  }
+  .acc-header .eyebrow{
+    font-family:'Special Elite', monospace; font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--slate);
+  }
+  .acc-header h2{
+    font-family:'Cormorant Garamond', serif; font-weight:400; font-style:italic; font-size:26px; color:var(--white);
+  }
+  .acc-divider{ display:flex; justify-content:center; margin:2px 0 22px; }
+  .acc-divider svg{ width:190px; height:18px; opacity:.55; }
+
+  p.body-text{
+    max-width:56ch; margin-bottom:22px; font-size:16px; color:var(--white-dim);
+    font-family:'Times New Roman', Times, serif;
+    font-stretch:condensed; line-height:1.42; text-align:justify;
+    letter-spacing:.005em;
+  }
+
+  /* two paragraphs, one either side, with a sigil line between them */
+  .split-grid{ display:grid; grid-template-columns:1fr 30px 1fr; gap:0 22px; align-items:start; }
+  .split-grid .ornament-col{ display:flex; justify-content:center; padding-top:6px; }
+  .split-grid .ornament-col svg{ width:18px; height:140px; opacity:.45; }
+  .split-grid p.body-text{ max-width:38ch; }
+  @media (max-width:700px){
+    .split-grid{ grid-template-columns:1fr; }
+    .split-grid .ornament-col{ margin:4px 0 14px; }
+    .split-grid .ornament-col svg{ width:90px; height:18px; transform:rotate(90deg); }
+  }
+
+  /* face claim section: plain text, no side frame anymore */
+  .fc-grid{ display:block; }
+
+  /* banner placeholder — a wide image spot, sized modestly so it doesn't
+     dominate the letter. Replace the <span> inside with <img src="images/..."> */
+  .acc-banner{
+    width:100%; max-height:150px; aspect-ratio:20/7; margin:0 0 30px; overflow:hidden; position:relative;
+    background:linear-gradient(150deg,#141b23,#0c1116); border:1px solid var(--line);
+  }
+  .acc-banner span{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--slate); text-align:center; padding:0 16px;
+  }
+  .acc-banner img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .acc-banner + .split-grid, .acc-banner + .fc-grid, .acc-banner + p.body-text{ margin-top:8px; }
+  .split-grid + .acc-banner, .fc-grid + .acc-banner, p.body-text + .acc-banner{ margin-top:30px; }
+  @media (max-width:560px){ .acc-banner{ aspect-ratio:4/3; max-height:none; } }
+
+  footer{
+    padding:60px 24px 90px; text-align:center; color:var(--slate);
+    font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+    border-top:1px solid var(--line); max-width:600px; margin:60px auto 0;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  footer .footer-divider{ margin-bottom:18px; opacity:.5; }
+  footer .footer-divider svg{ width:170px; height:16px; }
+  footer .footer-mark{ margin-bottom:14px; opacity:.5; }
+  footer .footer-mark svg{ width:16px; height:16px; }
+
+  #sound-toggle{
+    position:fixed; bottom:26px; right:26px; z-index:20;
+    font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--slate); background:rgba(10,12,14,.8); border:1px solid var(--line); padding:10px 14px;
+    cursor:pointer; display:flex; align-items:center; gap:8px; backdrop-filter:blur(6px);
+    transition:color .3s ease, border-color .3s ease;
+  }
+  #sound-toggle:hover{ color:var(--white); border-color:var(--white-dim); }
+  .bars{ display:flex; align-items:flex-end; gap:2px; height:10px; }
+  .bars i{ width:2px; background:var(--white-dim); display:block; animation:bar 1s ease-in-out infinite; }
+  .bars i:nth-child(1){ height:40%; animation-delay:0s; }
+  .bars i:nth-child(2){ height:100%; animation-delay:.15s; }
+  .bars i:nth-child(3){ height:65%; animation-delay:.3s; }
+  body.muted .bars i{ animation-play-state:paused; height:20% !important; }
+  @keyframes bar{ 0%,100%{ transform:scaleY(.4);} 50%{ transform:scaleY(1);} }
+
+  @media (prefers-reduced-motion:reduce){
+    .bars i{ animation:none !important; }
+    section.acc.active{ animation:none !important; }
+    .panel.open{ animation:none !important; }
+  }
+
+  @media (max-width:680px){
+    .hero-grid{ grid-template-columns:1fr; text-align:left; }
+    .hero .flourish, .hero .name, .hero-para{ max-width:none; }
+    .hero-nav{ gap:18px; }
+  }
+</style>
+</head>
+<body class="muted">
+
+<div class="vignette"></div>
+<div class="weave"></div>
+<div class="grain"></div>
+
+<!-- shared symbols, reused via <use> — color is set by the `.floral` wrapper class (currently white) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ic-flower" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1">
+        <ellipse cx="12" cy="7" rx="3" ry="5"/>
+        <ellipse cx="12" cy="17" rx="3" ry="5"/>
+        <ellipse cx="7" cy="12" rx="5" ry="3"/>
+        <ellipse cx="17" cy="12" rx="5" ry="3"/>
+      </g>
+      <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
+    </symbol>
+    <!-- a spare, angular divider line — ticks and a hollow diamond hinge, cyber-sigil flavored -->
+    <symbol id="ic-sigil-line" viewBox="0 0 240 20">
+      <path d="M0 10 H98 M142 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
+      <path d="M98 10 L110 3 L122 10 L110 17 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M110 3 V17" stroke="currentColor" stroke-width=".6" opacity=".55"/>
+      <path d="M28 5 V15 M212 5 V15" stroke="currentColor" stroke-width=".8" opacity=".55"/>
+      <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+      <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+    </symbol>
+    <symbol id="ic-sigil-vert" viewBox="0 0 26 150">
+      <path d="M13 6 V62 M13 88 V144" stroke="currentColor" stroke-width="1" fill="none"/>
+      <path d="M13 62 L20 75 L13 88 L6 75 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M6 75 H20" stroke="currentColor" stroke-width=".6" opacity=".55"/>
+      <path d="M8 26 H18 M8 124 H18" stroke="currentColor" stroke-width=".8" opacity=".55"/>
+      <circle cx="13" cy="12" r="1.4" fill="currentColor" opacity=".6"/>
+      <circle cx="13" cy="138" r="1.4" fill="currentColor" opacity=".6"/>
+    </symbol>
+    <!-- variant divider — a row of small diamonds along the line -->
+    <symbol id="ic-sigil-line-b" viewBox="0 0 240 20">
+      <path d="M0 10 H92 M148 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
+      <path d="M100 10 L106 5 L112 10 L106 15 Z M120 10 L126 5 L132 10 L126 15 Z M140 10 L146 5 L120 10Z" fill="none" stroke="currentColor" stroke-width=".8"/>
+      <path d="M100 10 L106 5 L112 10 L106 15 Z" fill="currentColor" opacity=".5"/>
+      <path d="M128 10 L134 5 L140 10 L134 15 Z" fill="none" stroke="currentColor" stroke-width=".8"/>
+      <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+      <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+    </symbol>
+    <!-- variant divider — a soft wave with a single center dot -->
+    <symbol id="ic-sigil-line-c" viewBox="0 0 240 20">
+      <path d="M0 10 H84" stroke="currentColor" stroke-width="1" fill="none"/>
+      <path d="M84 10 Q96 2 108 10 T132 10 T156 10" stroke="currentColor" stroke-width="1" fill="none"/>
+      <path d="M156 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
+      <circle cx="120" cy="10" r="2" fill="currentColor" opacity=".7"/>
+      <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+      <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+    </symbol>
+    <!-- variant divider — twin ticks flanking a plain hairline, sparser than the sigil line -->
+    <symbol id="ic-sigil-line-d" viewBox="0 0 240 20">
+      <path d="M0 10 H240" stroke="currentColor" stroke-width=".7" opacity=".6" fill="none"/>
+      <path d="M112 4 V16 M128 4 V16" stroke="currentColor" stroke-width="1"/>
+      <circle cx="120" cy="10" r="3" fill="none" stroke="currentColor" stroke-width=".8"/>
+      <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+      <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
+    </symbol>
+    <!-- large faint watermark sitting behind the open page -->
+    <symbol id="ic-watermark" viewBox="0 0 300 300">
+      <circle cx="150" cy="150" r="118" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="150" cy="150" r="80" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M150 32 L150 268 M32 150 L268 150 M67 67 L233 233 M233 67 L67 233" stroke="currentColor" stroke-width="1"/>
+      <path d="M150 32 L233 233 L67 233 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ENTRANCE -->
+<div id="gate">
+  <div class="scene" id="gate-trigger">
+    <div class="envelope">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="seal">✒</div>
+    </div>
+    <div class="paper">
+      <div class="lines"><span></span><span></span><span></span></div>
+    </div>
+    <div class="prompt">click to open the letter</div>
+  </div>
+</div>
+
+<div class="letter-page">
+
+  <!-- HERO: portrait left / text + nav right -->
+  <section class="hero">
+    <div class="glow"></div>
+    <div class="hero-grid">
+      <div>
+        <!-- PHOTO SPOT 1 — replace the <span> below with:
+             <img src="images/yourphoto.jpg"> — see README step 2 -->
+        <div class="frame">
+          <div class="frame-inner"><span>his portrait<br>goes here</span></div>
+        </div>
+        <p class="caption">Ivan, of Alien Stage</p>
+      </div>
+      <div>
+        <p class="flourish">the pages whisper, of someone you almost knew —</p>
+        <h1 class="name">Ivan</h1>
+        <div class="name-flourish floral"><svg><use href="#ic-sigil-line-c"></use></svg></div>
+        <p class="hero-para">Write a short paragraph here — a line or two of introduction, the mood you want to set, or the bit of context someone should have before they read any further.</p>
+        <nav class="hero-nav" aria-label="sections">
+          <a href="#muse" class="nav-dot" data-label="muse"><span class="mark">I.</span><span class="nav-pop">muse</span></a>
+          <a href="#operator" class="nav-dot" data-label="operator"><span class="mark">II.</span><span class="nav-pop">operator</span></a>
+          <a href="#rules" class="nav-dot" data-label="rules"><span class="mark">III.</span><span class="nav-pop">rules</span></a>
+          <a href="#dni" class="nav-dot" data-label="dni"><span class="mark">IV.</span><span class="nav-pop">dni</span></a>
+          <a href="#faceclaim" class="nav-dot" data-label="face claim"><span class="mark">V.</span><span class="nav-pop">face claim</span></a>
+          <!-- placeholder for your Spotify profile/playlist — swap href="#" below for the real URL -->
+          <a href="#" class="nav-dot nav-external" data-label="spotify" target="_blank" rel="noopener"><span class="mark">VI.</span><span class="nav-pop">spotify</span></a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL: a stack of letters. only the one a nav mark points to (or the top
+       of the stack) is legible; the rest sit turned and pushed back beneath it -->
+  <div class="panel" id="panel">
+    <svg class="panel-watermark floral" viewBox="0 0 300 300" style="position:absolute; top:50%; left:50%; width:480px; height:480px; transform:translate(-50%,-50%); opacity:.035; z-index:0; pointer-events:none;"><use href="#ic-watermark"></use></svg>
+
+    <div class="stack" id="stack">
+
+      <!-- MUSE -->
+      <section class="acc" id="muse">
+        <div class="acc-wrap">
+          <button class="acc-close" aria-label="close">×</button>
+          <div class="acc-scroll">
+          <div class="acc-header">
+            <span class="eyebrow">i · muse</span>
+            <h2>He, in his own quiet</h2>
+          </div>
+          <div class="acc-divider floral"><svg><use href="#ic-sigil-line"></use></svg></div>
+          <!-- BANNER SPOT — replace the <span> below with: <img src="images/muse-banner.jpg"> -->
+          <div class="acc-banner"><span>banner image here</span></div>
+          <div class="split-grid">
+            <p class="body-text">Write a paragraph here about who Ivan is to you — the stillness he carries, the guardedness that reads as coldness to strangers and as devotion to the few who stay close.</p>
+            <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
+            <p class="body-text">A second paragraph can hold what doesn't make it into the summary — a habit, a memory he doesn't talk about, the shape of what he wants versus what he thinks he deserves.</p>
+          </div>        </div>
+
+          </div>
+          <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
+
+          <span class="corner-label">next letter</span>
+      </section>
+
+      <!-- OPERATOR -->
+      <section class="acc" id="operator">
+        <div class="acc-wrap">
+          <button class="acc-close" aria-label="close">×</button>
+          <div class="acc-scroll">
+          <div class="acc-header">
+            <span class="eyebrow">ii · operator</span>
+            <h2>A note from Kairos</h2>
+          </div>
+          <div class="acc-divider floral"><svg><use href="#ic-sigil-line-b"></use></svg></div>
+          <div class="split-grid">
+            <p class="body-text">I'm Kairos, the one writing him. Write a paragraph here about yourself as a writer — your age range, timezone, and how you like to plot.</p>
+            <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
+            <p class="body-text">A second paragraph can hold the practical side — your pace, your hours, how threads tend to breathe with you, and anything else worth knowing beforehand.</p>
+          </div>        </div>
+
+          </div>
+          <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
+
+          <span class="corner-label">next letter</span>
+      </section>
+
+      <!-- RULES -->
+      <section class="acc" id="rules">
+        <div class="acc-wrap">
+          <button class="acc-close" aria-label="close">×</button>
+          <div class="acc-scroll">
+          <div class="acc-header">
+            <span class="eyebrow">iii · rules</span>
+            <h2>Before you write to him</h2>
+          </div>
+          <div class="acc-divider floral"><svg><use href="#ic-sigil-line-c"></use></svg></div>
+          <div class="split-grid">
+            <p class="body-text">Write your first rules here — that mun and muse are kept separate, and that dark themes may surface in threads with warnings given where needed.</p>
+            <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
+            <p class="body-text">A second paragraph for the rest — that plotting is always welcome, that replies come at their own pace and are worth the wait, and anything else worth knowing upfront.</p>
+          </div>        </div>
+
+          </div>
+          <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
+
+          <span class="corner-label">next letter</span>
+      </section>
+
+      <!-- DNI -->
+      <section class="acc" id="dni">
+        <div class="acc-wrap">
+          <button class="acc-close" aria-label="close">×</button>
+          <div class="acc-scroll">
+          <div class="acc-header">
+            <span class="eyebrow">iv · dni</span>
+            <h2>This letter is not for everyone</h2>
+          </div>
+          <div class="acc-divider floral"><svg><use href="#ic-sigil-line-d"></use></svg></div>
+          <div class="split-grid">
+            <p class="body-text">Write who this space isn't for here, said plainly but without losing the tone of the rest of the letter.</p>
+            <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
+            <p class="body-text">A second paragraph can hold the why, or anything softer you'd like to add underneath the boundary itself.</p>
+          </div>        </div>
+
+          </div>
+          <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
+
+          <span class="corner-label">next letter</span>
+      </section>
+
+      <!-- FACE CLAIM -->
+      <section class="acc" id="faceclaim">
+        <div class="acc-wrap">
+          <button class="acc-close" aria-label="close">×</button>
+          <div class="acc-scroll">
+          <div class="acc-header">
+            <span class="eyebrow">v · face claim</span>
+            <h2>The other side of the frame</h2>
+          </div>
+          <div class="acc-divider floral"><svg><use href="#ic-sigil-line"></use></svg></div>
+          <p class="body-text">A line or two here on how closely the portrayal follows canon, or what's been reimagined for this version of him.</p>
+          <!-- BANNER SPOT — replace the <span> below with: <img src="images/faceclaim-banner.jpg"> -->
+          <div class="acc-banner"><span>banner image here</span></div>
+          <p class="caption" style="text-align:center;">Ivan — Alien Stage</p>
+          </div>
+          </div>
+          <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
+
+          <span class="corner-label">next letter</span>
+      </section>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-divider floral"><svg><use href="#ic-sigil-line-d"></use></svg></div>
+    <div class="footer-mark floral"><svg><use href="#ic-flower"></use></svg></div>
+    © 2026 — written with care, not templates
+  </footer>
+
+</div>
+
+<audio id="bg-audio" src="music/song.mp3" loop preload="auto"></audio>
+
+<div id="sound-toggle">
+  <div class="bars"><i></i><i></i><i></i></div>
+  <span id="sound-label">sound off</span>
+</div>
+
+<script>
+  const gate = document.getElementById('gate');
+  const scene = document.getElementById('gate-trigger');
+  const audio = document.getElementById('bg-audio');
+  const soundToggle = document.getElementById('sound-toggle');
+  const soundLabel = document.getElementById('sound-label');
+  const body = document.body;
+
+  function enter(){
+    scene.classList.add('busy');
+    audio.volume = 0;
+    audio.play().catch(()=>{});
+    body.classList.remove('muted');
+    soundLabel.textContent = 'sound on';
+    let v = 0;
+    const fade = setInterval(()=>{
+      v += 0.04;
+      audio.volume = Math.min(v, 0.5);
+      if(v >= 0.5) clearInterval(fade);
+    }, 60);
+
+    scene.classList.add('open');                          // flap opens, seal fades
+    setTimeout(()=> scene.classList.add('out'), 750);      // letter slides up, lines fade in
+    setTimeout(()=> gate.classList.add('hidden'), 1950);   // whole scene crossfades into the site
+
+    scene.removeEventListener('click', enter);
+    document.removeEventListener('keydown', keyEnter);
+  }
+  function keyEnter(e){ if(e.key==='Enter'||e.key===' ') enter(); }
+  scene.addEventListener('click', enter);
+  document.addEventListener('keydown', keyEnter);
+
+  soundToggle.addEventListener('click', ()=>{
+    if(audio.paused){
+      audio.play().catch(()=>{});
+      body.classList.remove('muted');
+      soundLabel.textContent = 'sound on';
+    } else {
+      audio.pause();
+      body.classList.add('muted');
+      soundLabel.textContent = 'sound off';
+    }
+  });
+
+  // panel: a stack of letters — the active one sits on top and fully legible,
+  // the rest are fanned back and down beneath it, each showing only a pale
+  // sliver of paper. Tapping a letter's corner brings the next one to the top.
+  const panel = document.getElementById('panel');
+  const stack = document.getElementById('stack');
+  const order = ['muse','operator','rules','dni','faceclaim'];
+  const accSections = Array.from(document.querySelectorAll('section.acc'));
+  const navDots = Array.from(document.querySelectorAll('.nav-dot:not(.nav-external)'));
+  let currentIndex = -1;
+
+  function render(){
+    navDots.forEach(d => d.classList.remove('current'));
+    const n = order.length;
+    accSections.forEach(s=>{
+      const idx = order.indexOf(s.id);
+      const stackPos = (idx - currentIndex + n) % n; // 0 = on top, legible
+      s.setAttribute('data-stack', stackPos);
+    });
+    const id = order[currentIndex];
+    const dot = navDots.find(d => d.getAttribute('href') === '#' + id);
+    if(dot) dot.classList.add('current');
+    panel.classList.add('open');
+
+    // scroll the newly active letter back to its top
+    const active = document.getElementById(id);
+    const scrollEl = active.querySelector('.acc-scroll');
+    if(scrollEl) scrollEl.scrollTop = 0;
+
+    setTimeout(()=> panel.scrollIntoView({ behavior:'smooth', block:'start' }), 60);
+  }
+
+  function openSection(id){
+    const idx = order.indexOf(id);
+    if(idx === -1) return;
+    currentIndex = idx;
+    render();
+  }
+
+  function turnPage(step){
+    if(panel.classList.contains('open') === false){ currentIndex = 0; render(); return; }
+    currentIndex = (currentIndex + step + order.length) % order.length;
+    render();
+  }
+
+  function closePanel(){
+    navDots.forEach(d => d.classList.remove('current'));
+    panel.classList.remove('open');
+    currentIndex = -1;
+  }
+
+  navDots.forEach(dot=>{
+    dot.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const id = dot.getAttribute('href').slice(1);
+      const wasCurrent = dot.classList.contains('current');
+
+      navDots.forEach(d => d !== dot && d.classList.remove('active'));
+      dot.classList.add('active');
+      setTimeout(()=> dot.classList.remove('active'), 1800);
+
+      if(wasCurrent){ closePanel(); }
+      else { openSection(id); }
+    });
+  });
+
+  document.querySelectorAll('.acc-close').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); closePanel(); });
+  });
+
+  // the corner arrow — folded page-corner at the foot of the active letter —
+  // is the only way to advance to the next one
+  document.querySelectorAll('.corner-turn').forEach(corner=>{
+    corner.addEventListener('click', (e)=>{ e.stopPropagation(); turnPage(1); });
+  });
+
+</script>
+
+</body>
+</html>
