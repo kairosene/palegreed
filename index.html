@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ivan — a letter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Pinyon+Script&family=EB+Garamond:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=Pinyon+Script&family=EB+Garamond:ital@0;1&family=Special+Elite&family=Luxurious+Script&display=swap" rel="stylesheet">
 <style>
   :root{
     --black:      #0a0c0e;
@@ -17,15 +18,26 @@
     --white:      #edf0f2;
     --white-dim:  #b7c0c8;
     --glow:       #2e4258;
-    --paper-1:    #d8d2c1;
-    --paper-2:    #c7c0ac;
-    --paper-3:    #b6ae98;
+    --paper-0:    #cdd3d8;
+    --paper-1:    #b8c0c7;
+    --paper-2:    #9aa6b0;
+    --paper-3:    #7c8993;
+    --ink:        #131a20;
+    --ink-soft:   #3d4a56;
+    --tie-blue-light: #2a4570;
+    --tie-blue-dark:  #101a2c;
+  }
+
+  .luxurious-script-regular{
+    font-family: "Luxurious Script", cursive;
+    font-weight: 400;
+    font-style: normal;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{
-    background:var(--black);
+    background:var(--navy-900);
     color:var(--white-dim);
     font-family:'EB Garamond', serif;
     font-size:18px;
@@ -35,24 +47,34 @@
   ::selection{ background:var(--navy-700); color:var(--white); }
   a{ color:inherit; }
 
+  .bg-placeholder{
+    position:fixed; inset:0; z-index:-1; background:var(--navy-900);
+    background-size:cover; background-position:center;
+  }
+
+  .corner-gif{
+    position:fixed; z-index:15; width:120px; height:120px; pointer-events:none;
+  }
+  .corner-gif--tl{ top:0; left:0; }
+  .corner-gif--br{ bottom:0; right:0; }
+  .corner-gif img{ width:100%; height:100%; object-fit:contain; display:block; }
+
   .grain{
     position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-
   .weave{
     position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
     background-image:
       repeating-linear-gradient(45deg, rgba(237,240,242,.5) 0 1px, transparent 1px 6px),
       repeating-linear-gradient(-45deg, rgba(237,240,242,.5) 0 1px, transparent 1px 6px);
   }
-
   .vignette{
     position:fixed; inset:0; z-index:1; pointer-events:none;
     background:radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.55) 100%);
   }
 
-
+  /* ================= ENTRANCE ================= */
   #gate{
     position:fixed; inset:0; z-index:100; background:var(--black);
     display:flex; align-items:center; justify-content:center;
@@ -61,116 +83,140 @@
   }
   #gate.hidden{ opacity:0; visibility:hidden; transform:scale(1.06); }
 
-  .scene{ position:relative; width:220px; height:260px; cursor:pointer; }
+  .scene{ position:relative; width:240px; height:240px; cursor:pointer; }
 
-  .prompt{
-    position:absolute; bottom:-46px; left:50%; transform:translateX(-50%);
-    font-family:'Special Elite', monospace; font-size:11px; letter-spacing:.28em; text-transform:uppercase;
-    color:var(--slate); white-space:nowrap; transition:color .4s ease, opacity .3s ease;
+  .envelope{
+    position:absolute; left:10px; bottom:24px; width:220px; height:150px;
+    filter:drop-shadow(0 12px 26px rgba(0,0,0,.55));
+    perspective:700px;
+    transition:transform .4s ease;
   }
-  .scene:hover .prompt{ color:var(--white-dim); }
-  .scene.busy .prompt{ opacity:0; }
-
-  .envelope{ position:absolute; left:20px; bottom:60px; width:180px; height:118px; }
-  .env-body{ position:absolute; inset:0; background:linear-gradient(180deg,#151d25,#0e1319); border:1px solid var(--line); }
-  .env-flap{
-    position:absolute; top:0; left:0; width:100%; height:60px;
-    background:linear-gradient(160deg,#1a232c,#111820);
-    clip-path:polygon(0 0, 100% 0, 50% 100%);
-    transform-origin:top center;
-    transition:transform 1s cubic-bezier(.6,0,.25,1);
-    border-bottom:1px solid var(--line);
+  .scene:not(.open):hover .envelope{ transform:translateY(-4px); }
+  .env-body{
+    position:absolute; inset:0; z-index:0;
+    background:linear-gradient(180deg,#1b242e,#11161d);
+    border:1px solid rgba(0,0,0,.4);
+    border-radius:5px;
   }
-  .scene.open .env-flap{ transform:rotateX(180deg); }
-
-  .seal{
-    position:absolute; top:44px; left:50%; transform:translateX(-50%);
-    width:30px; height:30px; border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #3a4b5a, #202b35 70%, #10161d 100%);
-    box-shadow:0 2px 8px rgba(0,0,0,.6);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Cormorant Garamond', serif; font-style:italic; font-size:13px; color:var(--white-dim);
-    transition:opacity .6s ease, transform .6s ease; z-index:3;
-  }
-  .scene.open .seal{ opacity:0; transform:translateX(-50%) scale(.5); }
-
+  /* Constant size throughout — no resizing/zooming. Small enough (64px
+     tall) to sit entirely below the flap's fold line at rest, fully hidden
+     by the pocket regardless of the flap. Opening is a single, plain
+     translateY slide up to a natural resting height above the envelope. */
   .paper{
-    position:absolute; left:28px; bottom:64px; width:164px; height:100px;
-    background:linear-gradient(180deg,#161f28,#101720);
-    border:1px solid var(--line);
+    position:absolute; z-index:1;
+    background:linear-gradient(165deg,var(--paper-0),#b3bcc4 60%,var(--paper-1));
+    border:1px solid var(--paper-2);
     box-shadow:0 6px 18px rgba(0,0,0,.5);
-    z-index:2;
-    transform:translateY(6px);
-    transition:transform 1.1s cubic-bezier(.5,0,.2,1) .1s;
+    left:44px; right:44px; top:80px; height:64px;
+    transform:translateY(0);
+    transition:transform 1.3s cubic-bezier(.5,0,.2,1) .1s;
   }
-  .paper .lines{ position:absolute; inset:16px 14px; }
+  .paper .lines{ position:absolute; inset:14px 12px; }
   .paper .lines span{
-    display:block; height:1px; background:var(--line); margin-bottom:12px;
+    display:block; height:1px; background:var(--paper-3); margin-bottom:12px;
     opacity:0; transform:translateY(4px);
     transition:opacity .6s ease, transform .6s ease;
   }
   .paper .lines span:nth-child(1){ width:70%; }
   .paper .lines span:nth-child(2){ width:90%; }
   .paper .lines span:nth-child(3){ width:55%; }
-  .scene.out .paper{ transform:translateY(-90px); }
+
+  .scene.out .paper{
+    transform:translateY(-95px);
+  }
   .scene.out .paper .lines span{ opacity:.85; transform:translateY(0); }
-  .scene.out .paper .lines span:nth-child(1){ transition-delay:.15s; }
-  .scene.out .paper .lines span:nth-child(2){ transition-delay:.3s; }
-  .scene.out .paper .lines span:nth-child(3){ transition-delay:.45s; }
+  .scene.out .paper .lines span:nth-child(1){ transition-delay:.95s; }
+  .scene.out .paper .lines span:nth-child(2){ transition-delay:1.1s; }
+  .scene.out .paper .lines span:nth-child(3){ transition-delay:1.25s; }
+
+
+
+  /* env-pocket uses the SAME full box (inset:0) and SAME gradient as
+     env-body — clip-path just restricts what actually gets painted to the
+     lower half. Because the gradient is computed over an identical box in
+     both layers, the colors line up pixel-for-pixel with no seam, unlike
+     giving the pocket its own smaller box (which recomputes the gradient
+     over a shorter height and produces a visible color jump). */
+  .env-pocket{
+    position:absolute; inset:0; z-index:2;
+    background:linear-gradient(180deg,#1b242e,#11161d);
+    border-radius:5px;
+    clip-path:inset(50% 0 0 0);
+  }
+  .env-fold-line{
+    position:absolute; z-index:3; height:1px; background:var(--line);
+    top:0; left:0; transform-origin:0 0; opacity:.6; pointer-events:none;
+  }
+  .env-fold-line--l{ width:133px; transform:translate(0px,150px) rotate(-34.3deg); }
+  .env-fold-line--r{ width:133px; transform:translate(220px,150px) rotate(-145.7deg); }
+
+  /* top pair traces the flap's own triangle edge — needed now that the flap
+     matches the body's color exactly (to kill the seam), which means the
+     flap's outline is otherwise invisible. Sits above the flap (z-index 6)
+     and fades out as the flap opens, since the fold line shouldn't remain
+     once the flap itself is no longer there. */
+  .env-fold-line--tl{
+    width:133px; z-index:6; transform:translate(0px,0px) rotate(34.3deg);
+    transition:opacity .5s ease;
+  }
+  .env-fold-line--tr{
+    width:133px; z-index:6; transform:translate(220px,0px) rotate(145.7deg);
+    transition:opacity .5s ease;
+  }
+  .scene.open .env-fold-line--tl,
+  .scene.open .env-fold-line--tr{ opacity:0; }
+
+  /* seal — a single flat shape (no separate inner layer) so it reads as one
+     component; the highlight lives inside the same gradient instead of a
+     second stacked shape. Sits above the fold-lines (z-index 7) so it's
+     never cut through by them, with a slow breathing glow to invite the
+     first click. */
+  .env-seal{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:36px; height:36px; z-index:7;
+    background:radial-gradient(circle at 34% 30%, #4d6178 0%, #2c3a48 42%, #16202a 100%);
+    clip-path:polygon(50% 0%, 62% 34%, 100% 50%, 62% 66%, 50% 100%, 38% 66%, 0% 50%, 38% 34%);
+    box-shadow:0 2px 5px rgba(0,0,0,.6), inset 0 1px 3px rgba(237,240,242,.18);
+    transition:opacity .4s ease, filter .3s ease;
+    animation:seal-pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes seal-pulse{
+    0%,100%{ filter:drop-shadow(0 0 0 rgba(237,240,242,0)); }
+    50%{ filter:drop-shadow(0 0 6px rgba(237,240,242,.35)); }
+  }
+  .scene.open .env-seal{ opacity:0; animation:none; }
+  .scene:hover .env-seal{ filter:brightness(1.15); }
+
+  /* pure triangle, tip stopping exactly at the middle of the envelope.
+     Folds up and back on open so the inside of the envelope (and the
+     letter within it) is revealed, rather than the flap just vanishing. */
+  .env-flap{
+    position:absolute; inset:0; z-index:4;
+    background:linear-gradient(180deg,#1b242e,#11161d);
+    clip-path:polygon(0% 0%, 100% 0%, 50% 50%);
+    transform-origin:top center;
+    backface-visibility:hidden;
+    transition:transform 1.25s cubic-bezier(.45,0,.15,1), opacity .6s ease .5s;
+  }
+  .scene.open .env-flap{ transform:rotateX(200deg); opacity:0; }
 
   /* ================= letter page ================= */
   .letter-page{ position:relative; }
   .floral{ color:var(--white); }
 
-  .glow{
-    position:absolute; width:420px; height:420px; border-radius:50%;
-    background:radial-gradient(circle, var(--glow) 0%, transparent 70%);
-    filter:blur(30px); opacity:.35; pointer-events:none; z-index:0;
-  }
-
-  /* ---------------- hero: two-column ---------------- */
-  .hero{ position:relative; padding:110px 24px 70px; }
-  .hero .glow{ top:20%; left:8%; }
-  .hero-grid{
-    max-width:680px; margin:0 auto; display:grid;
-    grid-template-columns:220px 1fr; gap:56px; align-items:center;
-    position:relative; z-index:1;
-  }
-  .hero .flourish{
+  .flourish{
     font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:300;
-    font-size:17px; color:var(--slate); max-width:32ch; margin-bottom:18px; line-height:1.5;
+    font-size:17px; color:var(--ink-soft); max-width:32ch; margin:0 auto 18px; line-height:1.5;
+    text-align:center;
   }
-  .hero .name{
-    font-family:'Pinyon Script', cursive; font-size:clamp(56px,9vw,96px); color:var(--white);
-    line-height:1; margin-bottom:6px;
+  .name{
+    font-family:'Luxurious Script','Pinyon Script',cursive; font-size:clamp(48px,10vw,80px); color:var(--ink);
+    line-height:1; margin-bottom:8px; text-align:center;
   }
-  .name-flourish{ display:flex; margin-bottom:20px; opacity:.55; }
-  .name-flourish svg{ width:130px; height:16px; }
-  .hero-para{
-    font-family:'Times New Roman', Times, serif; font-stretch:condensed;
-    font-size:16px; color:var(--white-dim); max-width:42ch; line-height:1.6; margin-bottom:22px;
-  }
+  .name-flourish{ display:flex; justify-content:center; margin-bottom:20px; opacity:.5; }
+  .name-flourish svg{ width:120px; height:14px; }
 
-  .hero-nav{ display:flex; flex-wrap:wrap; align-items:center; gap:26px; padding-top:20px; border-top:1px solid var(--line); }
-  .nav-dot{ position:relative; text-decoration:none; display:flex; align-items:center; justify-content:center; min-width:20px; height:20px; }
-  .nav-dot .mark{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; letter-spacing:.02em; color:var(--slate); transition:color .35s ease; white-space:nowrap; }
-  .nav-dot:hover .mark, .nav-dot.active .mark, .nav-dot.current .mark{ color:var(--white); }
-  .nav-dot.current::after{
-    content:""; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
-    width:4px; height:4px; border-radius:50%; background:var(--white);
-  }
-  .nav-pop{
-    position:absolute; top:-32px; left:50%; transform:translateX(-50%) translateY(4px);
-    font-family:'Special Elite', monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--white); background:var(--navy-800); border:1px solid var(--line);
-    padding:6px 10px; white-space:nowrap; opacity:0; visibility:hidden;
-    transition:opacity .3s ease, transform .3s ease, visibility .3s ease; pointer-events:none;
-  }
-  .nav-dot.active .nav-pop{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
-  .nav-dot.nav-external:hover .nav-pop{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
-
-  .frame{ width:100%; max-width:220px; padding:9px; background:linear-gradient(160deg,#2a3540,#161d24 55%,#232d38); box-shadow:0 10px 30px rgba(0,0,0,.55); position:relative; }
-
+  .frame{ width:100%; max-width:200px; padding:9px; margin:0 auto; background:linear-gradient(160deg,#2a3540,#161d24 55%,#232d38); box-shadow:0 10px 30px rgba(0,0,0,.4); position:relative; }
   .frame::before, .frame::after{
     content:""; position:absolute; width:16px; height:16px; border:1px solid rgba(237,240,242,.4); pointer-events:none;
   }
@@ -180,7 +226,6 @@
     background:linear-gradient(150deg,#141b23,#0c1116); border:1px solid var(--line);
     aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; position:relative;
   }
-
   .frame-inner::before, .frame-inner::after{
     content:""; position:absolute; width:12px; height:12px; border:1px solid rgba(237,240,242,.22); pointer-events:none;
   }
@@ -188,86 +233,143 @@
   .frame-inner::after{ bottom:6px; left:6px; border-right:none; border-top:none; }
   .frame-inner span{ font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--slate); text-align:center; padding:0 16px; }
   .frame-inner img{ width:100%; height:100%; object-fit:cover; }
-  .caption{ margin-top:14px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; color:var(--slate); }
+  .caption{ margin-top:14px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; color:var(--ink-soft); }
 
-  /* ---------------- panel ---------------- */
-  .panel{
-    display:none; position:relative; padding:26px 24px 60px;
+  /* plain image placeholder — no ornamental frame */
+  .plain-photo{
+    width:100%; max-width:200px; aspect-ratio:3/4; margin:0 auto;
+    background:repeating-linear-gradient(45deg,#e7ecf0,#e7ecf0 10px,#dbe2e8 10px,#dbe2e8 20px);
+    border:1px dashed var(--paper-2);
+    display:flex; align-items:center; justify-content:center;
   }
-  .panel.open{ display:block; animation:panelFade .5s ease; }
-  @keyframes panelFade{ from{ opacity:0; } to{ opacity:1; } }
+  .plain-photo span{
+    font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--ink-soft); text-align:center; padding:0 16px;
+  }
+  .plain-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
 
+  /* ---------------- panel (a stack of letters) ---------------- */
+  .panel{ position:relative; padding:26px 24px 140px; }
 
   .stack{ position:relative; max-width:520px; margin:0 auto; height:min(720px,80vh); }
+  @media (max-width:600px){
+    .stack{ height:min(560px,70vh); }
+  }
+
+  .stack-string{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:100%; height:26px; z-index:20; cursor:pointer;
+  }
+  .stack-string:focus-visible{ outline:2px solid var(--white-dim); outline-offset:6px; }
+  .stack-string.untied{ pointer-events:none; }
+  .stack-string:not(.untied):hover .string-line,
+  .stack-string:not(.untied):hover .knot-half{
+    filter:brightness(1.3);
+  }
+
+  .string-line{
+    position:absolute; left:0; right:0; top:50%; height:3px;
+    transform:translateY(-50%); border-radius:2px;
+    background:linear-gradient(180deg,var(--tie-blue-light),var(--tie-blue-dark));
+    box-shadow:0 1px 3px rgba(0,0,0,.4);
+    transition:opacity .5s ease .35s, filter .3s ease;
+  }
+
+  .knot-half{
+    position:absolute; top:50%; width:40px; height:12px;
+    background:linear-gradient(180deg,var(--tie-blue-light),var(--tie-blue-dark));
+    box-shadow:0 2px 5px rgba(0,0,0,.5);
+    transition:filter .3s ease;
+  }
+  .knot-left{
+    left:calc(50% - 34px); transform:translateY(-50%);
+    border-radius:7px 3px 3px 7px;
+    transform-origin:right center;
+    z-index:1;
+  }
+  .knot-right{
+    left:calc(50% - 6px); transform:translateY(-50%);
+    border-radius:3px 7px 7px 3px;
+    transform-origin:left center;
+    z-index:0;
+  }
+
+  @keyframes knot-undo-left{
+    0%   { transform:translateY(-50%) translateX(0%) rotate(0deg); opacity:1; }
+    45%  { transform:translateY(-35%) translateX(-40%) rotate(-10deg); opacity:1; }
+    100% { transform:translateY(10%) translateX(-110%) rotate(-20deg); opacity:0; }
+  }
+  @keyframes knot-undo-right{
+    0%   { transform:translateY(-50%) translateX(0%) rotate(0deg); opacity:1; }
+    45%  { transform:translateY(-35%) translateX(40%) rotate(10deg); opacity:1; }
+    100% { transform:translateY(10%) translateX(110%) rotate(20deg); opacity:0; }
+  }
+  .stack-string.untied .knot-left{ animation:knot-undo-left 1.2s cubic-bezier(.22,1,.36,1) forwards; }
+  .stack-string.untied .knot-right{ animation:knot-undo-right 1.2s cubic-bezier(.22,1,.36,1) forwards; }
+  .stack-string.untied .string-line{ opacity:0; }
 
 
   section.acc{
-    position:absolute; inset:0; padding:34px 30px 30px;
-    background:linear-gradient(165deg,#1a232c,#121920 60%,#0e141a);
-    border:1px solid var(--line); box-shadow:0 18px 40px rgba(0,0,0,.55);
+    position:absolute; inset:0; padding:50px 48px 46px;
+    background:linear-gradient(165deg,var(--paper-0),#b3bcc4 60%,var(--paper-1));
+    border:1px solid var(--paper-2); box-shadow:0 18px 40px rgba(0,0,0,.55);
+    color:var(--ink);
     transition:transform .55s cubic-bezier(.33,.1,.2,1), box-shadow .5s ease;
     transform-origin:50% 100%; overflow:hidden;
   }
+  section.acc::before{
+    content:""; position:absolute; inset:0; opacity:.05; mix-blend-mode:multiply; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  }
   section.acc::after{
- 
     content:""; position:absolute; inset:0; opacity:0;
     transition:opacity .5s ease; pointer-events:none;
   }
-  section.acc[data-stack="0"]{ transform:translate(0,0) rotate(0deg) scale(1); z-index:5; }
-  section.acc[data-stack="1"]{ transform:translate(14px,20px) rotate(1.4deg) scale(.975); z-index:4; }
-  section.acc[data-stack="2"]{ transform:translate(24px,36px) rotate(-1.8deg) scale(.95); z-index:3; }
-  section.acc[data-stack="3"]{ transform:translate(32px,50px) rotate(2.1deg) scale(.925); z-index:2; }
-  section.acc[data-stack="4"]{ transform:translate(38px,62px) rotate(-1.3deg) scale(.9); z-index:1; }
-  section.acc[data-stack="1"]::after{ opacity:.06; background:var(--paper-1); }
-  section.acc[data-stack="2"]::after{ opacity:.1; background:var(--paper-2); }
-  section.acc[data-stack="3"]::after{ opacity:.14; background:var(--paper-2); }
-  section.acc[data-stack="4"]::after{ opacity:.18; background:var(--paper-3); }
+  section.acc .floral{ color:var(--ink-soft); }
 
+  /* messier fan — offsets no longer step in one steady diagonal direction,
+     rotation alternates left/right, and vertical drop isn't a straight staircase */
+  section.acc[data-stack="0"]{ transform:translate(0,0) rotate(0deg) scale(1); z-index:10; }
+  section.acc[data-stack="1"]{ transform:translate(-26px,10px) rotate(-6deg) scale(.965); z-index:9; }
+  section.acc[data-stack="2"]{ transform:translate(20px,34px) rotate(3deg) scale(.95); z-index:8; }
+  section.acc[data-stack="3"]{ transform:translate(-14px,22px) rotate(7deg) scale(.93); z-index:7; }
+  section.acc[data-stack="4"]{ transform:translate(30px,46px) rotate(-5deg) scale(.9); z-index:6; }
+  section.acc[data-stack="5"]{ transform:translate(-34px,52px) rotate(2deg) scale(.87); z-index:5; }
+  section.acc[data-stack="1"]::after{ opacity:.12; background:var(--paper-2); }
+  section.acc[data-stack="2"]::after{ opacity:.16; background:var(--paper-2); }
+  section.acc[data-stack="3"]::after{ opacity:.2; background:var(--paper-3); }
+  section.acc[data-stack="4"]::after{ opacity:.24; background:var(--paper-3); }
+  section.acc[data-stack="5"]::after{ opacity:.28; background:var(--paper-3); }
 
+  .acc-wrap{ max-width:580px; margin:0 auto; position:relative; z-index:1; height:100%; opacity:0; pointer-events:none; }
   section.acc[data-stack="0"] .acc-wrap{ opacity:1; pointer-events:auto; transition:opacity .3s ease .15s; }
   section.acc:not([data-stack="0"]) .acc-wrap{ opacity:0; pointer-events:none; transition:opacity .2s ease; }
 
-  .acc-wrap{ max-width:580px; margin:0 auto; position:relative; z-index:1; height:100%; }
-
   .acc-scroll{
     height:100%; overflow-y:auto; padding-right:10px; padding-top:2px;
-    scrollbar-width:thin; scrollbar-color:var(--line) transparent;
+    scrollbar-width:thin; scrollbar-color:var(--paper-2) transparent;
   }
   .acc-scroll::-webkit-scrollbar{ width:5px; }
   .acc-scroll::-webkit-scrollbar-track{ background:transparent; }
-  .acc-scroll::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
-  .acc-scroll::-webkit-scrollbar-thumb:hover{ background:var(--slate); }
+  .acc-scroll::-webkit-scrollbar-thumb{ background:var(--paper-2); border-radius:3px; }
+  .acc-scroll::-webkit-scrollbar-thumb:hover{ background:var(--ink-soft); }
 
-  section.acc:not([data-stack="0"]) .corner-turn,
-  section.acc:not([data-stack="0"]) .corner-label{ opacity:0; pointer-events:none; }
-  section.acc[data-stack="0"] .corner-turn,
-  section.acc[data-stack="0"] .corner-label{ transition:opacity .3s ease .15s; }
-
-  .acc-close{
-    position:absolute; top:-6px; right:-8px; background:none; border:none; cursor:pointer;
-    color:var(--slate); font-family:'Cormorant Garamond', serif; font-size:22px; line-height:1;
-    padding:6px 8px; transition:color .3s ease; z-index:2;
-  }
-  .acc-close:hover{ color:var(--white); }
+  section.acc:not([data-stack="0"]) .corner-turn{ opacity:0; pointer-events:none; }
+  section.acc[data-stack="0"] .corner-turn{ transition:opacity .3s ease .15s; }
 
   .corner-turn{
     position:absolute; right:0; bottom:0; width:54px; height:54px; z-index:6;
     display:flex; align-items:flex-end; justify-content:flex-end; cursor:pointer;
-    background:linear-gradient(135deg, transparent 50%, var(--navy-700) 50.5%);
-    border-top:1px solid var(--line); border-left:1px solid var(--line);
+    background:linear-gradient(135deg, transparent 50%, var(--paper-2) 50.5%);
+    border-top:1px solid var(--paper-2); border-left:1px solid var(--paper-2);
     transition:background .3s ease;
   }
-  .corner-turn:hover{ background:linear-gradient(135deg, transparent 50%, var(--glow) 50.5%); }
+  .corner-turn:hover{ background:linear-gradient(135deg, transparent 50%, var(--paper-3) 50.5%); }
   .corner-turn .arrow{
-    font-family:'Cormorant Garamond', serif; font-size:20px; color:var(--white-dim);
+    font-family:'Cormorant Garamond', serif; font-size:20px; color:var(--ink-soft);
     margin:0 8px 6px 0; transition:transform .3s ease, color .3s ease; pointer-events:none;
   }
-  .corner-turn:hover .arrow{ transform:translate(3px,-3px); color:var(--white); }
-  .corner-label{
-    position:absolute; right:14px; bottom:16px; z-index:6;
-    font-family:'Special Elite', monospace; font-size:8px; letter-spacing:.18em; text-transform:uppercase;
-    color:var(--slate); white-space:nowrap; opacity:.7; pointer-events:none;
-  }
+  .corner-turn:hover .arrow{ transform:translate(3px,-3px); color:var(--ink); }
 
   .acc-header{
     display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
@@ -275,21 +377,34 @@
   }
   .acc-header .eyebrow{
     font-family:'Special Elite', monospace; font-size:11px; letter-spacing:.3em; text-transform:uppercase;
-    color:var(--slate);
+    color:var(--ink-soft);
   }
   .acc-header h2{
-    font-family:'Cormorant Garamond', serif; font-weight:400; font-style:italic; font-size:26px; color:var(--white);
+    font-family:'Luxurious Script', 'Cormorant Garamond', serif; font-weight:400; font-style:normal; font-size:34px; color:var(--ink);
   }
   .acc-divider{ display:flex; justify-content:center; margin:2px 0 22px; }
   .acc-divider svg{ width:190px; height:18px; opacity:.55; }
 
   p.body-text{
-    max-width:56ch; margin-bottom:22px; font-size:16px; color:var(--white-dim);
+    max-width:56ch; margin-bottom:22px; font-size:16px; color:var(--ink);
     font-family:'Times New Roman', Times, serif;
     font-stretch:condensed; line-height:1.42; text-align:justify;
     letter-spacing:.005em;
   }
 
+  .begin-grid{ display:grid; grid-template-columns:180px 1fr; gap:28px; align-items:center; margin-bottom:22px; }
+  @media (max-width:560px){ .begin-grid{ grid-template-columns:1fr; } }
+
+  .signature-spot{
+    width:170px; height:64px; margin:8px 0 0 auto; position:relative;
+    background:repeating-linear-gradient(45deg,#e7ecf0,#e7ecf0 10px,#dbe2e8 10px,#dbe2e8 20px);
+    border:1px dashed var(--paper-2); display:flex; align-items:center; justify-content:center;
+  }
+  .signature-spot span{
+    font-family:'Special Elite', monospace; font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-soft); text-align:center; padding:0 10px;
+  }
+  .signature-spot img{ max-width:100%; max-height:100%; object-fit:contain; }
 
   .split-grid{ display:grid; grid-template-columns:1fr 30px 1fr; gap:0 22px; align-items:start; }
   .split-grid .ornament-col{ display:flex; justify-content:center; padding-top:6px; }
@@ -301,20 +416,19 @@
     .split-grid .ornament-col svg{ width:90px; height:18px; transform:rotate(90deg); }
   }
 
-  .fc-grid{ display:block; }
-
   .acc-banner{
     width:100%; max-height:150px; aspect-ratio:20/7; margin:0 0 30px; overflow:hidden; position:relative;
-    background:linear-gradient(150deg,#141b23,#0c1116); border:1px solid var(--line);
+    background:repeating-linear-gradient(45deg,#e7ecf0,#e7ecf0 10px,#dbe2e8 10px,#dbe2e8 20px);
+    border:1px dashed var(--paper-2);
   }
   .acc-banner span{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase;
-    color:var(--slate); text-align:center; padding:0 16px;
+    color:var(--ink-soft); text-align:center; padding:0 16px;
   }
   .acc-banner img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .acc-banner + .split-grid, .acc-banner + .fc-grid, .acc-banner + p.body-text{ margin-top:8px; }
-  .split-grid + .acc-banner, .fc-grid + .acc-banner, p.body-text + .acc-banner{ margin-top:30px; }
+  .acc-banner + .split-grid, .acc-banner + p.body-text{ margin-top:8px; }
+  .split-grid + .acc-banner, p.body-text + .acc-banner{ margin-top:30px; }
   @media (max-width:560px){ .acc-banner{ aspect-ratio:4/3; max-height:none; } }
 
   footer{
@@ -323,41 +437,27 @@
     border-top:1px solid var(--line); max-width:600px; margin:60px auto 0;
     display:flex; flex-direction:column; align-items:center;
   }
-  footer .footer-divider{ margin-bottom:18px; opacity:.5; }
-  footer .footer-divider svg{ width:170px; height:16px; }
-  footer .footer-mark{ margin-bottom:14px; opacity:.5; }
-  footer .footer-mark svg{ width:16px; height:16px; }
 
   #sound-toggle{
     position:fixed; bottom:26px; right:26px; z-index:20;
-    font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase;
-    color:var(--slate); background:rgba(10,12,14,.8); border:1px solid var(--line); padding:10px 14px;
-    cursor:pointer; display:flex; align-items:center; gap:8px; backdrop-filter:blur(6px);
-    transition:color .3s ease, border-color .3s ease;
+    width:42px; height:42px;
+    color:var(--slate); background:transparent; border:none;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:color .3s ease;
   }
-  #sound-toggle:hover{ color:var(--white); border-color:var(--white-dim); }
-  .bars{ display:flex; align-items:flex-end; gap:2px; height:10px; }
-  .bars i{ width:2px; background:var(--white-dim); display:block; animation:bar 1s ease-in-out infinite; }
-  .bars i:nth-child(1){ height:40%; animation-delay:0s; }
-  .bars i:nth-child(2){ height:100%; animation-delay:.15s; }
-  .bars i:nth-child(3){ height:65%; animation-delay:.3s; }
-  body.muted .bars i{ animation-play-state:paused; height:20% !important; }
-  @keyframes bar{ 0%,100%{ transform:scaleY(.4);} 50%{ transform:scaleY(1);} }
-
-  @media (prefers-reduced-motion:reduce){
-    .bars i{ animation:none !important; }
-    section.acc.active{ animation:none !important; }
-    .panel.open{ animation:none !important; }
-  }
-
-  @media (max-width:680px){
-    .hero-grid{ grid-template-columns:1fr; text-align:left; }
-    .hero .flourish, .hero .name, .hero-para{ max-width:none; }
-    .hero-nav{ gap:18px; }
-  }
+  #sound-toggle:hover{ color:var(--white); }
+  #sound-toggle svg{ width:22px; height:22px; }
+  .mute-x{ transition:opacity .2s ease; opacity:1; }
+  .sound-waves{ transition:opacity .2s ease; opacity:0; }
+  body:not(.muted) .mute-x{ opacity:0; }
+  body:not(.muted) .sound-waves{ opacity:1; }
 </style>
 </head>
 <body class="muted">
+
+<div class="bg-placeholder"></div>
+<div class="corner-gif corner-gif--tl"><!-- <img src="images/yourgif.gif"> --></div>
+<div class="corner-gif corner-gif--br"><!-- <img src="images/yourgif.gif"> --></div>
 
 <div class="vignette"></div>
 <div class="weave"></div>
@@ -374,7 +474,6 @@
       </g>
       <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
     </symbol>
-
     <symbol id="ic-sigil-line" viewBox="0 0 240 20">
       <path d="M0 10 H98 M142 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
       <path d="M98 10 L110 3 L122 10 L110 17 Z" fill="none" stroke="currentColor" stroke-width="1"/>
@@ -391,7 +490,6 @@
       <circle cx="13" cy="12" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="13" cy="138" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-
     <symbol id="ic-sigil-line-b" viewBox="0 0 240 20">
       <path d="M0 10 H92 M148 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
       <path d="M100 10 L106 5 L112 10 L106 15 Z M120 10 L126 5 L132 10 L126 15 Z M140 10 L146 5 L120 10Z" fill="none" stroke="currentColor" stroke-width=".8"/>
@@ -400,7 +498,6 @@
       <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-
     <symbol id="ic-sigil-line-c" viewBox="0 0 240 20">
       <path d="M0 10 H84" stroke="currentColor" stroke-width="1" fill="none"/>
       <path d="M84 10 Q96 2 108 10 T132 10 T156 10" stroke="currentColor" stroke-width="1" fill="none"/>
@@ -409,7 +506,6 @@
       <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-    
     <symbol id="ic-sigil-line-d" viewBox="0 0 240 20">
       <path d="M0 10 H240" stroke="currentColor" stroke-width=".7" opacity=".6" fill="none"/>
       <path d="M112 4 V16 M128 4 V16" stroke="currentColor" stroke-width="1"/>
@@ -417,7 +513,6 @@
       <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-
     <symbol id="ic-watermark" viewBox="0 0 300 300">
       <circle cx="150" cy="150" r="118" fill="none" stroke="currentColor" stroke-width="1"/>
       <circle cx="150" cy="150" r="80" fill="none" stroke="currentColor" stroke-width="1"/>
@@ -427,65 +522,68 @@
   </defs>
 </svg>
 
-
+<!-- ENTRANCE -->
 <div id="gate">
   <div class="scene" id="gate-trigger">
     <div class="envelope">
       <div class="env-body"></div>
+      <div class="env-fold-line env-fold-line--l"></div>
+      <div class="env-fold-line env-fold-line--r"></div>
+      <div class="env-fold-line env-fold-line--tl"></div>
+      <div class="env-fold-line env-fold-line--tr"></div>
+      <div class="paper">
+        <div class="lines"><span></span><span></span><span></span></div>
+      </div>
+      <div class="env-pocket"></div>
+      <div class="env-seal"></div>
       <div class="env-flap"></div>
-      <div class="seal">✒</div>
     </div>
-    <div class="paper">
-      <div class="lines"><span></span><span></span><span></span></div>
-    </div>
-    <div class="prompt">click to open the letter</div>
   </div>
 </div>
 
 <div class="letter-page">
-
-
-  <section class="hero">
-    <div class="glow"></div>
-    <div class="hero-grid">
-      <div>
-
-        <div class="frame">
-          <div class="frame-inner"><span>his portrait<br>goes here</span></div>
-        </div>
-        <p class="caption">Ivan, of Alien Stage</p>
-      </div>
-      <div>
-        <p class="flourish">the pages whisper, of someone you almost knew —</p>
-        <h1 class="name">Ivan</h1>
-        <div class="name-flourish floral"><svg><use href="#ic-sigil-line-c"></use></svg></div>
-        <p class="hero-para">Write a short paragraph here — a line or two of introduction, the mood you want to set, or the bit of context someone should have before they read any further.</p>
-        <nav class="hero-nav" aria-label="sections">
-          <a href="#muse" class="nav-dot" data-label="muse"><span class="mark">I.</span><span class="nav-pop">muse</span></a>
-          <a href="#operator" class="nav-dot" data-label="operator"><span class="mark">II.</span><span class="nav-pop">operator</span></a>
-          <a href="#rules" class="nav-dot" data-label="rules"><span class="mark">III.</span><span class="nav-pop">rules</span></a>
-          <a href="#dni" class="nav-dot" data-label="dni"><span class="mark">IV.</span><span class="nav-pop">dni</span></a>
-          <a href="#faceclaim" class="nav-dot" data-label="face claim"><span class="mark">V.</span><span class="nav-pop">face claim</span></a>
-
-          <a href="#" class="nav-dot nav-external" data-label="spotify" target="_blank" rel="noopener"><span class="mark">VI.</span><span class="nav-pop">spotify</span></a>
-        </nav>
-      </div>
-    </div>
-  </section>
-
 
   <div class="panel" id="panel">
     <svg class="panel-watermark floral" viewBox="0 0 300 300" style="position:absolute; top:50%; left:50%; width:480px; height:480px; transform:translate(-50%,-50%); opacity:.035; z-index:0; pointer-events:none;"><use href="#ic-watermark"></use></svg>
 
     <div class="stack" id="stack">
 
+      <div class="stack-string" id="stackString" role="button" tabindex="0" aria-label="untie the letters">
+        <span class="string-line"></span>
+        <span class="knot-half knot-left"></span>
+        <span class="knot-half knot-right"></span>
+      </div>
+
+      <!-- BEGINNING -->
+      <section class="acc" id="beginning">
+        <div class="acc-wrap">
+          <div class="acc-scroll">
+          <div class="acc-header">
+            <span class="eyebrow">i · beginning</span>
+            <h2 class="name">Ivan</h2>
+          </div>
+          <p class="flourish">the pages whisper, of someone you almost knew —</p>
+          <div class="acc-divider floral"><svg><use href="#ic-sigil-line-c"></use></svg></div>
+          <div class="begin-grid">
+            <div>
+              <!-- PHOTO SPOT 1 — replace the <span> below with: <img src="images/yourphoto.jpg"> -->
+              <div class="plain-photo"><span>his portrait<br>goes here</span></div>
+              <p class="caption" style="text-align:center;">Ivan, of Alien Stage</p>
+            </div>
+            <p class="body-text" style="margin-bottom:0;">Write a short paragraph here — a line or two of introduction, the mood you want to set, or the bit of context someone should have before they read any further.</p>
+          </div>
+          <p class="body-text">A second paragraph can go underneath — anything more you'd like someone to know before the letters begin.</p>
+          </div>
+          </div>
+          <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
+      </section>
+
       <!-- MUSE -->
       <section class="acc" id="muse">
         <div class="acc-wrap">
-          <button class="acc-close" aria-label="close">×</button>
           <div class="acc-scroll">
           <div class="acc-header">
-            <span class="eyebrow">i · muse</span>
+            <span class="eyebrow">ii · muse</span>
             <h2>He, in his own quiet</h2>
           </div>
           <div class="acc-divider floral"><svg><use href="#ic-sigil-line"></use></svg></div>
@@ -495,21 +593,18 @@
             <p class="body-text">Write a paragraph here about who Ivan is to you — the stillness he carries, the guardedness that reads as coldness to strangers and as devotion to the few who stay close.</p>
             <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
             <p class="body-text">A second paragraph can hold what doesn't make it into the summary — a habit, a memory he doesn't talk about, the shape of what he wants versus what he thinks he deserves.</p>
-          </div>        </div>
-
+          </div>
+          </div>
           </div>
           <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
-
-          <span class="corner-label">next letter</span>
       </section>
 
       <!-- OPERATOR -->
       <section class="acc" id="operator">
         <div class="acc-wrap">
-          <button class="acc-close" aria-label="close">×</button>
           <div class="acc-scroll">
           <div class="acc-header">
-            <span class="eyebrow">ii · operator</span>
+            <span class="eyebrow">iii · operator</span>
             <h2>A note from Kairos</h2>
           </div>
           <div class="acc-divider floral"><svg><use href="#ic-sigil-line-b"></use></svg></div>
@@ -517,21 +612,18 @@
             <p class="body-text">I'm Kairos, the one writing him. Write a paragraph here about yourself as a writer — your age range, timezone, and how you like to plot.</p>
             <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
             <p class="body-text">A second paragraph can hold the practical side — your pace, your hours, how threads tend to breathe with you, and anything else worth knowing beforehand.</p>
-          </div>        </div>
-
+          </div>
+          </div>
           </div>
           <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
-
-          <span class="corner-label">next letter</span>
       </section>
 
       <!-- RULES -->
       <section class="acc" id="rules">
         <div class="acc-wrap">
-          <button class="acc-close" aria-label="close">×</button>
           <div class="acc-scroll">
           <div class="acc-header">
-            <span class="eyebrow">iii · rules</span>
+            <span class="eyebrow">iv · rules</span>
             <h2>Before you write to him</h2>
           </div>
           <div class="acc-divider floral"><svg><use href="#ic-sigil-line-c"></use></svg></div>
@@ -539,21 +631,18 @@
             <p class="body-text">Write your first rules here — that mun and muse are kept separate, and that dark themes may surface in threads with warnings given where needed.</p>
             <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
             <p class="body-text">A second paragraph for the rest — that plotting is always welcome, that replies come at their own pace and are worth the wait, and anything else worth knowing upfront.</p>
-          </div>        </div>
-
+          </div>
+          </div>
           </div>
           <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
-
-          <span class="corner-label">next letter</span>
       </section>
 
       <!-- DNI -->
       <section class="acc" id="dni">
         <div class="acc-wrap">
-          <button class="acc-close" aria-label="close">×</button>
           <div class="acc-scroll">
           <div class="acc-header">
-            <span class="eyebrow">iv · dni</span>
+            <span class="eyebrow">v · dni</span>
             <h2>This letter is not for everyone</h2>
           </div>
           <div class="acc-divider floral"><svg><use href="#ic-sigil-line-d"></use></svg></div>
@@ -561,21 +650,18 @@
             <p class="body-text">Write who this space isn't for here, said plainly but without losing the tone of the rest of the letter.</p>
             <div class="ornament-col floral"><svg><use href="#ic-sigil-vert"></use></svg></div>
             <p class="body-text">A second paragraph can hold the why, or anything softer you'd like to add underneath the boundary itself.</p>
-          </div>        </div>
-
+          </div>
+          </div>
           </div>
           <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
-
-          <span class="corner-label">next letter</span>
       </section>
 
       <!-- FACE CLAIM -->
       <section class="acc" id="faceclaim">
         <div class="acc-wrap">
-          <button class="acc-close" aria-label="close">×</button>
           <div class="acc-scroll">
           <div class="acc-header">
-            <span class="eyebrow">v · face claim</span>
+            <span class="eyebrow">vi · face claim</span>
             <h2>The other side of the frame</h2>
           </div>
           <div class="acc-divider floral"><svg><use href="#ic-sigil-line"></use></svg></div>
@@ -583,19 +669,18 @@
           <!-- BANNER SPOT — replace the <span> below with: <img src="images/faceclaim-banner.jpg"> -->
           <div class="acc-banner"><span>banner image here</span></div>
           <p class="caption" style="text-align:center;">Ivan — Alien Stage</p>
+          <p class="body-text" style="text-align:right; margin-bottom:6px;">with love,</p>
+          <!-- SIGNATURE SPOT — replace the <span> below with: <img src="images/signature.png"> -->
+          <div class="signature-spot"><span>signature goes here</span></div>
           </div>
           </div>
           <div class="corner-turn" data-turn="next" aria-label="next letter"><span class="arrow">›</span></div>
-
-          <span class="corner-label">next letter</span>
       </section>
 
     </div>
   </div>
 
   <footer>
-    <div class="footer-divider floral"><svg><use href="#ic-sigil-line-d"></use></svg></div>
-    <div class="footer-mark floral"><svg><use href="#ic-flower"></use></svg></div>
     © 2026 — written with care, not templates
   </footer>
 
@@ -603,17 +688,22 @@
 
 <audio id="bg-audio" src="music/song.mp3" loop preload="auto"></audio>
 
-<div id="sound-toggle">
-  <div class="bars"><i></i><i></i><i></i></div>
-  <span id="sound-label">sound off</span>
-</div>
+<button id="sound-toggle" aria-label="toggle sound">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/>
+    <g class="sound-waves">
+      <path d="M16 9a4 4 0 010 6"/>
+      <path d="M18.5 6.5a8 8 0 010 11"/>
+    </g>
+    <path class="mute-x" d="M16.5 9.5l4.5 5M21 9.5l-4.5 5"/>
+  </svg>
+</button>
 
 <script>
   const gate = document.getElementById('gate');
   const scene = document.getElementById('gate-trigger');
   const audio = document.getElementById('bg-audio');
   const soundToggle = document.getElementById('sound-toggle');
-  const soundLabel = document.getElementById('sound-label');
   const body = document.body;
 
   function enter(){
@@ -621,7 +711,6 @@
     audio.volume = 0;
     audio.play().catch(()=>{});
     body.classList.remove('muted');
-    soundLabel.textContent = 'sound on';
     let v = 0;
     const fade = setInterval(()=>{
       v += 0.04;
@@ -629,9 +718,9 @@
       if(v >= 0.5) clearInterval(fade);
     }, 60);
 
-    scene.classList.add('open');                          
-    setTimeout(()=> scene.classList.add('out'), 750);      
-    setTimeout(()=> gate.classList.add('hidden'), 1950);  
+    scene.classList.add('open');
+    setTimeout(()=> scene.classList.add('out'), 950);
+    setTimeout(()=> gate.classList.add('hidden'), 3050);
 
     scene.removeEventListener('click', enter);
     document.removeEventListener('keydown', keyEnter);
@@ -644,85 +733,49 @@
     if(audio.paused){
       audio.play().catch(()=>{});
       body.classList.remove('muted');
-      soundLabel.textContent = 'sound on';
     } else {
       audio.pause();
       body.classList.add('muted');
-      soundLabel.textContent = 'sound off';
     }
   });
 
-
-  const panel = document.getElementById('panel');
   const stack = document.getElementById('stack');
-  const order = ['muse','operator','rules','dni','faceclaim'];
+  const stackString = document.getElementById('stackString');
+  const order = ['beginning','muse','operator','rules','dni','faceclaim'];
   const accSections = Array.from(document.querySelectorAll('section.acc'));
-  const navDots = Array.from(document.querySelectorAll('.nav-dot:not(.nav-external)'));
   let currentIndex = -1;
 
   function render(){
-    navDots.forEach(d => d.classList.remove('current'));
     const n = order.length;
     accSections.forEach(s=>{
       const idx = order.indexOf(s.id);
-      const stackPos = (idx - currentIndex + n) % n; // 0 = on top, legible
+      const stackPos = (idx - currentIndex + n) % n;
       s.setAttribute('data-stack', stackPos);
     });
     const id = order[currentIndex];
-    const dot = navDots.find(d => d.getAttribute('href') === '#' + id);
-    if(dot) dot.classList.add('current');
-    panel.classList.add('open');
-
-
     const active = document.getElementById(id);
     const scrollEl = active.querySelector('.acc-scroll');
     if(scrollEl) scrollEl.scrollTop = 0;
-
-    setTimeout(()=> panel.scrollIntoView({ behavior:'smooth', block:'start' }), 60);
   }
 
-  function openSection(id){
-    const idx = order.indexOf(id);
-    if(idx === -1) return;
-    currentIndex = idx;
+  function untie(){
+    if(currentIndex !== -1) return;
+    stackString.classList.add('untied');
+    currentIndex = 0;
     render();
   }
+  stackString.addEventListener('click', untie);
+  stackString.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') untie(); });
 
   function turnPage(step){
-    if(panel.classList.contains('open') === false){ currentIndex = 0; render(); return; }
+    if(currentIndex === -1){ untie(); return; }
     currentIndex = (currentIndex + step + order.length) % order.length;
     render();
   }
 
-  function closePanel(){
-    navDots.forEach(d => d.classList.remove('current'));
-    panel.classList.remove('open');
-    currentIndex = -1;
-  }
-
-  navDots.forEach(dot=>{
-    dot.addEventListener('click', (e)=>{
-      e.preventDefault();
-      const id = dot.getAttribute('href').slice(1);
-      const wasCurrent = dot.classList.contains('current');
-
-      navDots.forEach(d => d !== dot && d.classList.remove('active'));
-      dot.classList.add('active');
-      setTimeout(()=> dot.classList.remove('active'), 1800);
-
-      if(wasCurrent){ closePanel(); }
-      else { openSection(id); }
-    });
-  });
-
-  document.querySelectorAll('.acc-close').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{ e.stopPropagation(); closePanel(); });
-  });
-
   document.querySelectorAll('.corner-turn').forEach(corner=>{
     corner.addEventListener('click', (e)=>{ e.stopPropagation(); turnPage(1); });
   });
-
 </script>
 
 </body>
