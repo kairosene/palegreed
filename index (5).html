@@ -17,9 +17,6 @@
     --white:      #edf0f2;
     --white-dim:  #b7c0c8;
     --glow:       #2e4258;
-    /* muted parchment tones — used only as thin "page edge" slivers behind the
-       active letter, so the stack reads like real paper without breaking the
-       night palette */
     --paper-1:    #d8d2c1;
     --paper-2:    #c7c0ac;
     --paper-3:    #b6ae98;
@@ -43,21 +40,19 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* a very faint linen weave, sitting under the grain — adds texture to the
-     black background without reading as busy or patterned up close */
   .weave{
     position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
     background-image:
       repeating-linear-gradient(45deg, rgba(237,240,242,.5) 0 1px, transparent 1px 6px),
       repeating-linear-gradient(-45deg, rgba(237,240,242,.5) 0 1px, transparent 1px 6px);
   }
-  /* soft vignette to draw the eye inward on wide screens */
+
   .vignette{
     position:fixed; inset:0; z-index:1; pointer-events:none;
     background:radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.55) 100%);
   }
 
-  /* ================= ENTRANCE ================= */
+
   #gate{
     position:fixed; inset:0; z-index:100; background:var(--black);
     display:flex; align-items:center; justify-content:center;
@@ -175,7 +170,7 @@
   .nav-dot.nav-external:hover .nav-pop{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
 
   .frame{ width:100%; max-width:220px; padding:9px; background:linear-gradient(160deg,#2a3540,#161d24 55%,#232d38); box-shadow:0 10px 30px rgba(0,0,0,.55); position:relative; }
-  /* outer corner brackets */
+
   .frame::before, .frame::after{
     content:""; position:absolute; width:16px; height:16px; border:1px solid rgba(237,240,242,.4); pointer-events:none;
   }
@@ -185,7 +180,7 @@
     background:linear-gradient(150deg,#141b23,#0c1116); border:1px solid var(--line);
     aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; position:relative;
   }
-  /* inner corner brackets, offset from the outer pair for a layered, engraved feel */
+
   .frame-inner::before, .frame-inner::after{
     content:""; position:absolute; width:12px; height:12px; border:1px solid rgba(237,240,242,.22); pointer-events:none;
   }
@@ -195,21 +190,17 @@
   .frame-inner img{ width:100%; height:100%; object-fit:cover; }
   .caption{ margin-top:14px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; color:var(--slate); }
 
-  /* ---------------- panel (a stack of letters, one on top at a time) ---------------- */
+  /* ---------------- panel ---------------- */
   .panel{
     display:none; position:relative; padding:26px 24px 60px;
   }
   .panel.open{ display:block; animation:panelFade .5s ease; }
   @keyframes panelFade{ from{ opacity:0; } to{ opacity:1; } }
 
-  /* the stack — a fixed-height frame; each letter's writing scrolls inside
-     its own card rather than growing the page forever */
+
   .stack{ position:relative; max-width:520px; margin:0 auto; height:min(720px,80vh); }
 
-  /* every section is a "letter" card in the stack. only stack="0" (on top)
-     shows its writing — the rest sit turned and pushed back and down, with
-     only a pale paper edge peeking out, like a hand of letters fanned
-     underneath the one being read */
+
   section.acc{
     position:absolute; inset:0; padding:34px 30px 30px;
     background:linear-gradient(165deg,#1a232c,#121920 60%,#0e141a);
@@ -218,8 +209,7 @@
     transform-origin:50% 100%; overflow:hidden;
   }
   section.acc::after{
-    /* the pale paper edge — invisible on the active letter, a sliver of
-       parchment showing through on the ones stacked behind it */
+ 
     content:""; position:absolute; inset:0; opacity:0;
     transition:opacity .5s ease; pointer-events:none;
   }
@@ -233,15 +223,12 @@
   section.acc[data-stack="3"]::after{ opacity:.14; background:var(--paper-2); }
   section.acc[data-stack="4"]::after{ opacity:.18; background:var(--paper-3); }
 
-  /* only the top letter's writing is legible; the ones behind fade their
-     content so what shows through is just the plain paper of the page */
+
   section.acc[data-stack="0"] .acc-wrap{ opacity:1; pointer-events:auto; transition:opacity .3s ease .15s; }
   section.acc:not([data-stack="0"]) .acc-wrap{ opacity:0; pointer-events:none; transition:opacity .2s ease; }
 
   .acc-wrap{ max-width:580px; margin:0 auto; position:relative; z-index:1; height:100%; }
 
-  /* the letter's writing scrolls inside its own card; the close button and
-     corner arrow stay fixed in place regardless of scroll position */
   .acc-scroll{
     height:100%; overflow-y:auto; padding-right:10px; padding-top:2px;
     scrollbar-width:thin; scrollbar-color:var(--line) transparent;
@@ -251,9 +238,6 @@
   .acc-scroll::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
   .acc-scroll::-webkit-scrollbar-thumb:hover{ background:var(--slate); }
 
-  /* the corner arrow belongs to the card itself (not the text column) so it
-     sits flush at the physical corner of the letter; only the top letter's
-     is interactive or visible */
   section.acc:not([data-stack="0"]) .corner-turn,
   section.acc:not([data-stack="0"]) .corner-label{ opacity:0; pointer-events:none; }
   section.acc[data-stack="0"] .corner-turn,
@@ -266,8 +250,6 @@
   }
   .acc-close:hover{ color:var(--white); }
 
-  /* the corner arrow — a small folded page-corner at the foot of the active
-     letter; tap it to bring the next one to the top of the stack */
   .corner-turn{
     position:absolute; right:0; bottom:0; width:54px; height:54px; z-index:6;
     display:flex; align-items:flex-end; justify-content:flex-end; cursor:pointer;
@@ -308,7 +290,7 @@
     letter-spacing:.005em;
   }
 
-  /* two paragraphs, one either side, with a sigil line between them */
+
   .split-grid{ display:grid; grid-template-columns:1fr 30px 1fr; gap:0 22px; align-items:start; }
   .split-grid .ornament-col{ display:flex; justify-content:center; padding-top:6px; }
   .split-grid .ornament-col svg{ width:18px; height:140px; opacity:.45; }
@@ -319,11 +301,8 @@
     .split-grid .ornament-col svg{ width:90px; height:18px; transform:rotate(90deg); }
   }
 
-  /* face claim section: plain text, no side frame anymore */
   .fc-grid{ display:block; }
 
-  /* banner placeholder — a wide image spot, sized modestly so it doesn't
-     dominate the letter. Replace the <span> inside with <img src="images/..."> */
   .acc-banner{
     width:100%; max-height:150px; aspect-ratio:20/7; margin:0 0 30px; overflow:hidden; position:relative;
     background:linear-gradient(150deg,#141b23,#0c1116); border:1px solid var(--line);
@@ -384,7 +363,6 @@
 <div class="weave"></div>
 <div class="grain"></div>
 
-<!-- shared symbols, reused via <use> — color is set by the `.floral` wrapper class (currently white) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="ic-flower" viewBox="0 0 24 24">
@@ -396,7 +374,7 @@
       </g>
       <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
     </symbol>
-    <!-- a spare, angular divider line — ticks and a hollow diamond hinge, cyber-sigil flavored -->
+
     <symbol id="ic-sigil-line" viewBox="0 0 240 20">
       <path d="M0 10 H98 M142 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
       <path d="M98 10 L110 3 L122 10 L110 17 Z" fill="none" stroke="currentColor" stroke-width="1"/>
@@ -413,7 +391,7 @@
       <circle cx="13" cy="12" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="13" cy="138" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-    <!-- variant divider — a row of small diamonds along the line -->
+
     <symbol id="ic-sigil-line-b" viewBox="0 0 240 20">
       <path d="M0 10 H92 M148 10 H240" stroke="currentColor" stroke-width="1" fill="none"/>
       <path d="M100 10 L106 5 L112 10 L106 15 Z M120 10 L126 5 L132 10 L126 15 Z M140 10 L146 5 L120 10Z" fill="none" stroke="currentColor" stroke-width=".8"/>
@@ -422,7 +400,7 @@
       <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-    <!-- variant divider — a soft wave with a single center dot -->
+
     <symbol id="ic-sigil-line-c" viewBox="0 0 240 20">
       <path d="M0 10 H84" stroke="currentColor" stroke-width="1" fill="none"/>
       <path d="M84 10 Q96 2 108 10 T132 10 T156 10" stroke="currentColor" stroke-width="1" fill="none"/>
@@ -431,7 +409,7 @@
       <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-    <!-- variant divider — twin ticks flanking a plain hairline, sparser than the sigil line -->
+    
     <symbol id="ic-sigil-line-d" viewBox="0 0 240 20">
       <path d="M0 10 H240" stroke="currentColor" stroke-width=".7" opacity=".6" fill="none"/>
       <path d="M112 4 V16 M128 4 V16" stroke="currentColor" stroke-width="1"/>
@@ -439,7 +417,7 @@
       <circle cx="14" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
       <circle cx="226" cy="10" r="1.4" fill="currentColor" opacity=".6"/>
     </symbol>
-    <!-- large faint watermark sitting behind the open page -->
+
     <symbol id="ic-watermark" viewBox="0 0 300 300">
       <circle cx="150" cy="150" r="118" fill="none" stroke="currentColor" stroke-width="1"/>
       <circle cx="150" cy="150" r="80" fill="none" stroke="currentColor" stroke-width="1"/>
@@ -449,7 +427,7 @@
   </defs>
 </svg>
 
-<!-- ENTRANCE -->
+
 <div id="gate">
   <div class="scene" id="gate-trigger">
     <div class="envelope">
@@ -466,13 +444,12 @@
 
 <div class="letter-page">
 
-  <!-- HERO: portrait left / text + nav right -->
+
   <section class="hero">
     <div class="glow"></div>
     <div class="hero-grid">
       <div>
-        <!-- PHOTO SPOT 1 — replace the <span> below with:
-             <img src="images/yourphoto.jpg"> — see README step 2 -->
+
         <div class="frame">
           <div class="frame-inner"><span>his portrait<br>goes here</span></div>
         </div>
@@ -489,15 +466,14 @@
           <a href="#rules" class="nav-dot" data-label="rules"><span class="mark">III.</span><span class="nav-pop">rules</span></a>
           <a href="#dni" class="nav-dot" data-label="dni"><span class="mark">IV.</span><span class="nav-pop">dni</span></a>
           <a href="#faceclaim" class="nav-dot" data-label="face claim"><span class="mark">V.</span><span class="nav-pop">face claim</span></a>
-          <!-- placeholder for your Spotify profile/playlist — swap href="#" below for the real URL -->
+
           <a href="#" class="nav-dot nav-external" data-label="spotify" target="_blank" rel="noopener"><span class="mark">VI.</span><span class="nav-pop">spotify</span></a>
         </nav>
       </div>
     </div>
   </section>
 
-  <!-- PANEL: a stack of letters. only the one a nav mark points to (or the top
-       of the stack) is legible; the rest sit turned and pushed back beneath it -->
+
   <div class="panel" id="panel">
     <svg class="panel-watermark floral" viewBox="0 0 300 300" style="position:absolute; top:50%; left:50%; width:480px; height:480px; transform:translate(-50%,-50%); opacity:.035; z-index:0; pointer-events:none;"><use href="#ic-watermark"></use></svg>
 
@@ -653,9 +629,9 @@
       if(v >= 0.5) clearInterval(fade);
     }, 60);
 
-    scene.classList.add('open');                          // flap opens, seal fades
-    setTimeout(()=> scene.classList.add('out'), 750);      // letter slides up, lines fade in
-    setTimeout(()=> gate.classList.add('hidden'), 1950);   // whole scene crossfades into the site
+    scene.classList.add('open');                          
+    setTimeout(()=> scene.classList.add('out'), 750);      
+    setTimeout(()=> gate.classList.add('hidden'), 1950);  
 
     scene.removeEventListener('click', enter);
     document.removeEventListener('keydown', keyEnter);
@@ -676,9 +652,7 @@
     }
   });
 
-  // panel: a stack of letters — the active one sits on top and fully legible,
-  // the rest are fanned back and down beneath it, each showing only a pale
-  // sliver of paper. Tapping a letter's corner brings the next one to the top.
+
   const panel = document.getElementById('panel');
   const stack = document.getElementById('stack');
   const order = ['muse','operator','rules','dni','faceclaim'];
@@ -699,7 +673,7 @@
     if(dot) dot.classList.add('current');
     panel.classList.add('open');
 
-    // scroll the newly active letter back to its top
+
     const active = document.getElementById(id);
     const scrollEl = active.querySelector('.acc-scroll');
     if(scrollEl) scrollEl.scrollTop = 0;
@@ -745,8 +719,6 @@
     btn.addEventListener('click', (e)=>{ e.stopPropagation(); closePanel(); });
   });
 
-  // the corner arrow — folded page-corner at the foot of the active letter —
-  // is the only way to advance to the next one
   document.querySelectorAll('.corner-turn').forEach(corner=>{
     corner.addEventListener('click', (e)=>{ e.stopPropagation(); turnPage(1); });
   });
