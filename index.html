@@ -185,7 +185,10 @@
   }
   .scene.open .env-flap{ transform:rotateX(200deg); opacity:0; }
 
-  .letter-page{ position:relative; }
+  .letter-page{
+    position:relative; min-height:100vh; min-height:100dvh;
+    display:flex; align-items:center; justify-content:center;
+  }
   .floral{ color:var(--white); }
 
   .flourish{
@@ -233,11 +236,14 @@
     .plain-photo{ max-width:140px; }
   }
 
-  .panel{ position:relative; padding:26px 24px 140px; }
+  .panel{ position:relative; width:100%; padding:26px 24px; }
 
-  .stack{ position:relative; max-width:520px; margin:0 auto; height:min(720px,80vh); }
+  .stack{ position:relative; max-width:520px; margin:0 auto; height:min(720px,80vh); height:min(720px,80dvh); }
   @media (max-width:600px){
-    .stack{ height:min(560px,70vh); }
+    .stack{ max-width:420px; height:min(560px,64vh); height:min(560px,64dvh); }
+  }
+  @media (max-width:460px){
+    .stack{ max-width:88vw; height:min(520px,60vh); height:min(520px,60dvh); }
   }
 
   .stack-string{
@@ -316,6 +322,13 @@
   section.acc[data-stack="3"]{ transform:translate(-14px,22px) rotate(7deg) scale(.93); z-index:7; }
   section.acc[data-stack="4"]{ transform:translate(30px,46px) rotate(-5deg) scale(.9); z-index:6; }
   section.acc[data-stack="5"]{ transform:translate(-34px,52px) rotate(2deg) scale(.87); z-index:5; }
+  @media (max-width:600px){
+    section.acc[data-stack="1"]{ transform:translate(-10px,6px) rotate(-3deg) scale(.975); }
+    section.acc[data-stack="2"]{ transform:translate(8px,14px) rotate(2deg) scale(.96); }
+    section.acc[data-stack="3"]{ transform:translate(-6px,10px) rotate(3.5deg) scale(.945); }
+    section.acc[data-stack="4"]{ transform:translate(10px,18px) rotate(-2.5deg) scale(.93); }
+    section.acc[data-stack="5"]{ transform:translate(-12px,20px) rotate(1deg) scale(.915); }
+  }
   section.acc[data-stack="1"]::after{ opacity:.12; background:var(--paper-2); }
   section.acc[data-stack="2"]::after{ opacity:.16; background:var(--paper-2); }
   section.acc[data-stack="3"]::after{ opacity:.2; background:var(--paper-3); }
@@ -329,6 +342,7 @@
   .acc-scroll{
     height:100%; overflow-y:auto; padding-right:10px; padding-top:2px;
     scrollbar-width:thin; scrollbar-color:var(--paper-2) transparent;
+    -webkit-overflow-scrolling:touch; touch-action:pan-y;
   }
   .acc-scroll::-webkit-scrollbar{ width:5px; }
   .acc-scroll::-webkit-scrollbar-track{ background:transparent; }
@@ -338,8 +352,11 @@
   section.acc:not([data-stack="0"]) .corner-turn{ opacity:0; pointer-events:none; }
   section.acc[data-stack="0"] .corner-turn{ transition:opacity .3s ease .15s; }
 
+  @media (max-width:640px){
+    section.acc{ padding:32px 20px 30px; }
+  }
   @media (max-width:460px){
-    section.acc{ padding:38px 22px 34px; }
+    section.acc{ padding:30px 18px 26px; }
   }
 
   .corner-turn{
@@ -415,9 +432,12 @@
   @media (max-width:700px){
     .split-grid{ grid-template-columns:1fr 1px 1fr; gap:0 16px; }
   }
-  @media (max-width:460px){
-    .split-grid{ gap:0 10px; }
+  @media (max-width:640px){
+    .split-grid{ grid-template-columns:1fr; gap:0; }
+    .split-grid .ornament-col{ display:none; }
   }
+
+  .single-block p.body-text{ max-width:none; }
 
   .acc-banner{
     width:100%; max-height:150px; aspect-ratio:20/7; margin:0 0 30px; overflow:hidden; position:relative;
@@ -651,17 +671,12 @@
           <div class="acc-header">
             <span class="eyebrow">vi · afterwords</span>
           </div>
-          <div class="split-grid">
-            <div class="split-col">
+          <div class="single-block">
               <p class="body-text">For roleplay matters, plotting questions, activity updates, or just checking that I haven’t disappeared entirely, you can find me at @kairosenses. I check in there from time to time even when this account goes quiet. I can’t promise a fast reply, but messages left there tend to reach me eventually.</p>
               <p class="body-text">If you want to know me a little beyond the writing, I think music tells you more than any introduction could. I’ve linked my Spotify <a href="https://open.spotify.com/user/31j6unlc76sc5kc6fmfbx43bsd44" target="_blank" rel="noopener">here</a>. A lot of what’s there has directly shaped my writing and characters over the years. Think of it less like a social account and more like a collection of moments that have followed me through different parts of life.</p>
-            </div>
-            <div class="ornament-col"></div>
-            <div class="split-col">
               <p class="body-text">If these pages ever go quiet, or you can’t reach me through my main account, there are a few other ways to get in touch.</p>
               <p class="body-text">Just know these are mainly there for staying in touch and keeping updates, not an invitation for constant out-of-character chatting. I’m still a fairly private person. If you reach out, I just ask you carry the same courtesy and respect I’ve asked for throughout these letters.</p>
               <p class="body-text">And here we are, the last page. If you’ve read all the way through, thank you, genuinely. Whether you end up just passing through or sticking around to build stories with me, I’m grateful you took the time to wander through this little place I’ve built.</p>
-            </div>
           </div>
           <p class="body-text" style="text-align:right; margin-bottom:6px;">With Love,</p>
    
