@@ -60,15 +60,6 @@
     background-size:cover; background-position:center;
   }
 
-  .corner-gif{
-    position:fixed; z-index:15; width:190px; height:190px; pointer-events:none;
-  }
-  .corner-gif--tl{ top:0; left:0; }
-  .corner-gif--br{ bottom:0; right:0; }
-  .corner-gif img{ width:100%; height:100%; object-fit:contain; display:block; }
-  .corner-gif--tl img{ object-position:top left; }
-  .corner-gif--br img{ object-position:bottom right; }
-
   .grain{
     position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -229,7 +220,7 @@
   .caption{ margin-top:14px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:14px; color:var(--ink-soft); }
 
   .plain-photo{
-    width:100%; max-width:200px; aspect-ratio:3/4; margin:0 auto;
+    width:100%; max-width:160px; aspect-ratio:1/1; margin:0;
     display:flex; align-items:center; justify-content:center;
   }
   .plain-photo span{
@@ -311,7 +302,7 @@
   }
   section.acc::before{
     content:""; position:absolute; inset:0; opacity:.05; mix-blend-mode:multiply; pointer-events:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
   }
   section.acc::after{
     content:""; position:absolute; inset:0; opacity:0;
@@ -381,8 +372,8 @@
   p.body-text{
     max-width:56ch; margin-bottom:22px; font-size:16px; color:var(--ink);
     font-family:'Times New Roman', Times, serif;
-    font-stretch:condensed; line-height:1.22; text-align:justify;
-    letter-spacing:.005em;
+    font-stretch:condensed; line-height:1.20; text-align:justify;
+    letter-spacing:.002em;
   }
   @media (max-width:560px){
     p.body-text{ font-size:13.5px; line-height:1.2; }
@@ -392,7 +383,7 @@
     p.body-text{ font-size:12.5px; }
   }
 
-  .begin-grid{ display:grid; grid-template-columns:180px 1fr; gap:28px; align-items:start; margin-bottom:22px; }
+  .begin-grid{ display:grid; grid-template-columns:180px 1fr; gap:20px; align-items:start; margin-bottom:20px; }
   @media (max-width:560px){
     .begin-grid{ grid-template-columns:100px 1fr; gap:14px; align-items:start; }
   }
@@ -404,8 +395,8 @@
   }
 
   .signature-spot{
-    width:170px; height:64px; margin:8px 0 0 auto; position:relative;
-    display:flex; align-items:center; justify-content:center;
+    width:170px; height:110px; margin:0px 0 0 auto; position:relative;
+    display:flex; align-items:right; justify-content:right;
   }
   .signature-spot span{
     font-family:'Special Elite', monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
@@ -469,8 +460,6 @@
 <body class="muted">
 
 <div class="bg-placeholder"></div>
-<div class="corner-gif corner-gif--tl"><img src="https://raw.githubusercontent.com/kairosene/palegreed/main/images/top%20left.png"></div>
-<div class="corner-gif corner-gif--br"><img src="https://raw.githubusercontent.com/kairosene/palegreed/main/images/bottom%20right.png"></div>
 
 <div class="vignette"></div>
 <div class="stars" id="stars"></div>
@@ -558,14 +547,13 @@
             <span class="eyebrow">ii · muse</span>
           </div>
 
-          <div class="acc-banner"><img src="https://raw.githubusercontent.com/kairosene/palegreed/main/images/banner.png"></div>
           <div class="split-grid">
             <div class="split-col">
-              <p class="body-text">The muse I write is Ivan, one of the contestants from Alien Stage, and one of countless humans raised under the watch of an alien civilization that rarely showed anyone kindness. He grew into someone hard to read, someone people tend to keep at arm’s length because he feels distant. But underneath that composed surface is a person shaped almost entirely by longing and the need to survive. Growing up in a system that treated humans like property left its mark on how he understands love, attachment, and his own worth, twisting all three. People call him cold. What they’re actually seeing is restraint, because Ivan is capable of a devotion that runs far deeper than he ever lets show. My version of him sticks close to canon, though I like to dig further into the psychological side of who he is.</p>
+              <p class="body-text">The muse I write is Ivan, one of the contestants from Alien Stage, and one of countless humans raised under the watch of an alien civilization that rarely showed anyone kindness. He grew into someone hard to read, someone people tend to keep at arm’s length because he feels distant. But underneath that composed surface is a person shaped almost entirely by longing and the need to survive. Growing up in a system that treated humans like property left its mark on how he understands love, attachment, and his own worth, twisting all three. People call him cold. Ivan is capable of a devotion that runs far deeper than he ever lets show. My version of him sticks close to canon, though I like to dig further into the psychological side of who he is. I don’t try to soften the uglier parts of him. If anything I lean into them.</p>
             </div>
             <div class="ornament-col"></div>
             <div class="split-col">
-              <p class="body-text">I don’t try to soften the uglier parts of him. If anything I lean into them. To me, Ivan’s love stopped being healthy a long time ago. It’s consuming, obsessive, quietly possessive, and it eats at him in ways that aren’t good for either party, all hidden behind a composure that rarely cracks. What draws me to him is how badly he understands his own affection and how little he knows how to express it, so that’s the thread I keep pulling on. Expect my writing to circle around fixation, moral gray areas, unhealthy attachment, codependency, grief, and the slow way someone can lose themselves trying to love another person. None of this is meant to romanticize toxic behavior. It’s meant to sit with the tragedy of it. If darker or emotionally heavy content isn’t for you, please read with that in mind, because it’s not going anywhere in how I write him.</p>
+              <p class="body-text">To me, Ivan’s love stopped being healthy a long time ago. It’s consuming, obsessive, quietly possessive, and it eats at him in ways that aren’t good for either party, all hidden behind a composure that rarely cracks. What draws me to him is how badly he understands his own affection and how little he knows how to express it, so that’s the thread I keep pulling on. Expect my writing to circle around fixation, moral gray areas, unhealthy attachment, codependency, grief, and the slow way someone can lose themselves trying to love another person. None of this is meant to romanticize toxic behavior. It’s meant to sit with the tragedy of it. If darker or emotionally heavy content isn’t for you, please read with that in mind, because it’s not going anywhere in how I write him.</p>
             </div>
           </div>
           </div>
@@ -582,14 +570,14 @@
           </div>
           <div class="split-grid">
             <div class="split-col">
-              <p class="body-text">You can call me Kairos. If you’re out looking for someone to plot with, here’s what’s worth knowing. I write long-form, mostly in English, usually at least 1,000 words per reply and more if the story pulls me in. I care more about quality than speed, so don’t expect instant replies from me. What I do ask for is effort, communication, and genuine interest in whatever we’re building together. Writer’s block happens, life gets busy, that’s all understandable, just let me know if you need more time. We can plot out in the open, in a small private group, or through DMs, though I’d steer away from NSFW plotting in public posts since that’s a fast way to get an account suspended. For that, DMs, shared docs, whatever works for both of us. Discord is fine too, but RPNation is where I’m most active. I’m in UTC+7, so if you’re in a very different timezone my replies might come slower during the day since real life keeps me busy, but I’ll always get back to you eventually. I’m open to pretty much any genre, slice of life, romance, thriller, whatever comes to mind, we can figure it out together. I like partners who aren’t afraid to throw out headcanons and worldbuild with me, so don’t hold back on ideas. I enjoy talking through character dynamics and where things might go, both before a plot starts and while it’s running. I like having a rough direction but I also enjoy letting things shift naturally as we write. If you lose interest in a thread, a quick heads up means a lot more to me than silence, and I’ll do the same if I ever need to step away from something. I’m an adult, so I only plot with other adult operators. My DMs are open if you want to talk plots, don’t hesitate to reach out. Outside of writing Ivan, I spend a lot of time taking in books, music, films, and art. A good chunk of what ends up in my writing comes from things I run into day to day, or from artists and works that stuck with me.</p>
+              <p class="body-text">You can call me Kairos. If you’re out looking for someone to plot with, here’s what’s worth knowing. I write long-form, mostly in English, usually at least 1,000 words per reply and more if the story pulls me in. I care more about quality than speed, so don’t expect instant replies from me. What I do ask for is effort, communication, and genuine interest in whatever we’re building together. Writer’s block happens, life gets busy, that’s all understandable, just let me know if you need more time. We can plot out in the open, in a small private group, or through DMs, though I’d steer away from NSFW plotting in public posts since that’s a fast way to get an account suspended. For that, DMs, shared docs, whatever works for both of us. Discord is fine too, but RPNation is where I’m most active. I’m in UTC+7, so if you’re in a very different timezone my replies might come slower during the day since real life keeps me busy, but I’ll always get back to you eventually. I’m open to pretty much any genre, slice of life, romance, thriller, whatever comes to mind, we can figure it out together. I like partners who aren’t afraid to throw out headcanons and worldbuild with me, so don’t hold back on ideas. I enjoy talking through character dynamics and where things might go, both before a plot starts and while it’s running. I like having a rough direction but I also enjoy letting things shift naturally as we write. If you lose interest in a thread, a quick heads up means a lot more to me than silence, and I’ll do the same if I ever need to step away from something. I’m an adult, so I only plot with other adult operators. I also spend a lot of time taking in books, music, films, and art.</p>
             </div>
             <div class="ornament-col"></div>
             <div class="split-col">
-              <p class="body-text">Even though my stories skew dark, I’m a lot more relaxed as myself. I like talking headcanons, swapping ideas, and rambling about shared interests whenever there’s room for it. If there’s one thing worth knowing about me, it’s that I care a lot about stories and about the people I write them with. Some of my closest friends came out of roleplay, and a lot of my favorite memories started as collaborative writing. Whether we end up talking for five minutes or building a world together for months, I’m genuinely grateful for anyone who takes the time to share their imagination with me.</p>
+              <p class="body-text">A good chunk of what ends up in my writing comes from things I run into day to day, or from artists and works that stuck with me. Even though my stories skew dark, I’m a lot more relaxed as myself. I like talking headcanons, swapping ideas, and rambling about shared interests whenever there’s room for it. If there’s one thing worth knowing about me, it’s that I care a lot about stories and about the people I write them with. Some of my closest friends came out of roleplay, and a lot of my favorite memories started as collaborative writing. Whether we end up talking for five minutes or building a world together for months, I’m genuinely grateful for anyone who takes the time to share their imagination with me.</p>
     
               <div class="plain-photo"><img src="https://raw.githubusercontent.com/kairosene/palegreed/main/images/chibi.png"></div>
-              <p class="body-text">Before I go on, a quick word from me as the person behind this account. I live with a psychiatric condition and I’m currently in treatment for it, which can affect how active or responsive I am at times. There might be stretches where I reply slower than usual, go quiet for a while, or need to step back without much warning. If that happens, I ask for a bit of patience. It’s almost never personal, just me taking care of myself. My writing tends to sit in darker territory, psychological horror, obsession, unhealthy attachment, grief, tragedy, morally gray characters, all of it shows up regularly. None of it is written to glorify harmful behavior, it stays fiction. And please remember that whatever Ivan does or believes doesn’t reflect me. Keeping fiction and reality separate matters a lot to me, especially when the stories get heavy.</p>
+              <p class="body-text">Before I go on, a quick word from me as the person behind this account. I live with a psychiatric condition and I’m currently in treatment for it, which can affect how active or responsive I am at times. There might be stretches where I reply slower than usual, go quiet for a while, or need to step back without much warning. If that happens, I ask for a bit of patience. It’s almost never personal, just me taking care of myself. My writing tends to sit in darker territory, psychological horror, obsession, unhealthy attachment, grief, tragedy, morally gray characters, all of it shows up regularly. None of it is written to glorify harmful behavior, it stays fiction.</p>
             </div>
           </div>
           </div>
@@ -609,7 +597,7 @@
               <p class="body-text">Like I mentioned earlier, how I write Ivan is very much my own interpretation, and he isn’t meant to be a pleasant person. Depending on where a plot goes, he can be possessive, obsessive, manipulative, emotionally shut off, self-destructive, or just morally questionable in general. That’s all deliberate on my end and none of it says anything about who I am as a person. I’d appreciate everyone keeping that line between fiction and reality clear, it matters a lot to me.</p>
               <p class="body-text">As for romance specifically, I’m fairly picky about who I write it with. I mostly stick to canon dynamics and canon pairings since that’s where my interest actually lies. Right now I can only comfortably keep one long-term romantic plot going at a time, since I’d rather give one story my full attention than split it across several. For Ivan, I’m not writing heterosexual pairings, that’s just not something I do. The ships I’m most likely to write are IvanTill, and sometimes IvanLuka. I don’t do crossfandom shipping either, purely personal preference. And please don’t come in expecting a healthy, idealized romance from me, most of what I write leans into flawed people and messy relationships instead.</p>
               <p class="body-text">One last thing about me personally, please respect the privacy I keep. I’ll pop in as myself occasionally, but I’m here mainly to roleplay, and most of what I share stays in character. I don’t talk much about my personal life, so please don’t pry into things like my identity, relationships, education, job, or anything along those lines unless I bring it up myself. That privacy matters a lot to me.</p>
-              <p class="body-text">Lastly, please be mindful of my time and space. Don’t pressure me for replies, drag me into discourse or drama, or try to argue down boundaries I’ve already set. I also ask that you don’t copy or redistribute my writing, headcanons, or graphics without asking first. I’ll always give respect where it’s given to me. None of this is here to push people away, it’s just to keep things comfortable for everyone. Respect it, and my door stays open. I’d genuinely love to write with you.</p>
+              <p class="body-text">Lastly, please be mindful of my time and space. Don’t pressure me for replies, drag me into discourse or drama, or try to argue down boundaries I’ve already set. I also ask that you don’t copy or redistribute my writing, headcanons, or graphics without asking first. I’ll always give respect where it’s given to me. None of this is here to push people away, it’s just to keep things comfortable.</p>
    
               <div class="plain-photo" style="margin:6px auto 0;"><img src="https://raw.githubusercontent.com/kairosene/palegreed/main/images/flower.png"></div>
             </div>
@@ -619,7 +607,7 @@
               <p class="body-text">Because of both the source material and how I choose to write him, darker themes show up a lot. Obsession, unhealthy attachment, emotional dependency, grief, violence, psychological distress, tragedy, moral gray areas, these are things I actively enjoy exploring in my writing. They’re there for the story, never to romanticize or encourage anything harmful in real life. If any of that isn’t something you’re comfortable with, please curate accordingly and go in with that in mind.</p>
               <p class="body-text">When plotting, I’d much rather let relationships between characters grow on their own instead of deciding the outcome ahead of time. Whether it turns into friendship, rivalry, romance, or something messier in between, that’s part of the fun of discovering it as we write. Chemistry matters more to me than any label attached to it. Since both Ivan and I are written for a mature audience, I’ll only take romantic or mature plots with operators who are also adults.</p>
               <p class="body-text">Whatever romance happens in a plot stays between the characters, full stop. If Ivan shows affection in a thread, that’s not me showing affection. I’m always open to making friends with people I write with, but I’m not okay with roleplay being used as a way to pursue something beyond that. Please keep in-character and out-of-character clearly separated.</p>
-              <p class="body-text">I also don’t do face reveals, voice reveals, or exchanging personal social media, along with anything else that would mean sharing private info. That’s kept for people I actually trust beyond just roleplaying with them. Please don’t take it personally if I turn those requests down, it’s just about keeping myself comfortable and safe. And please don’t treat this account as a way to get closer to the person behind it. I’m here to write and enjoy the hobby. Friendships can happen naturally over time, but they’re never something to expect.</p>
+              <p class="body-text">I also don’t do face reveals, voice reveals, or exchanging personal social media, along with anything else that would mean sharing private info. That’s kept for people I actually trust beyond just roleplaying with them. Please don’t take it personally if I turn those requests down, it’s just about keeping myself comfortable and safe. And please don’t treat this account as a way to get closer to the person behind.</p>
             </div>
           </div>
           </div>
@@ -647,7 +635,7 @@
               <p class="body-text">This also isn’t a space for proshippers, or anyone who supports or normalizes incest, pedophilia, grooming, bestiality, or similar. MAPs, pedophiles, zoophiles, or anyone trying to justify or romanticize those things aren’t welcome here. Same goes for anyone who romanticizes abuse, self-harm, or predatory behavior and hides behind fiction to do it.</p>
               <p class="body-text">People who keep ignoring boundaries, pressure others into things they’re not comfortable with, guilt-trip writers over slow replies, or treat roleplay as a stand-in for a real relationship aren’t welcome either. This account is for storytelling and creativity, not for pursuing anything romantic or intimate with the person behind the screen. If that’s what you’re after, please look elsewhere.</p>
               <p class="body-text">Lastly, please respect other people’s creative work, mine included. Don’t repost, steal, redistribute, plagiarize, or claim my writing, graphics, or headcanons as your own without asking me first. I’m also not comfortable with generative AI being used to copy or replace an artist’s or writer’s work without their knowledge or consent. All I ask in return is basic courtesy and respect.</p>
-              <p class="body-text">If any of the themes, pairings, boundaries, or values in these letters don’t sit right with you, this is probably where we part ways, and that’s okay. To everyone still here, welcome, and thank you for reading this far. I hope you enjoy the rest of your time wandering through this little space.</p>
+              <p class="body-text">If any of the themes, pairings, boundaries, or values in these letters don’t sit right with you, this is probably where we part ways, and that’s okay.</p>
     
             </div>
           </div>
@@ -665,7 +653,7 @@
           </div>
           <div class="split-grid">
             <div class="split-col">
-              <p class="body-text">For roleplay matters, plotting questions, activity updates, or just checking that I haven’t disappeared entirely, you can find me at my CA, @kairosenses. I check in there from time to time even when this account goes quiet. I can’t promise a fast reply, but messages left there tend to reach me eventually.</p>
+              <p class="body-text">For roleplay matters, plotting questions, activity updates, or just checking that I haven’t disappeared entirely, you can find me at @kairosenses. I check in there from time to time even when this account goes quiet. I can’t promise a fast reply, but messages left there tend to reach me eventually.</p>
               <p class="body-text">If you want to know me a little beyond the writing, I think music tells you more than any introduction could. I’ve linked my Spotify <a href="https://open.spotify.com/user/31j6unlc76sc5kc6fmfbx43bsd44" target="_blank" rel="noopener">here</a>. A lot of what’s there has directly shaped my writing and characters over the years. Think of it less like a social account and more like a collection of moments that have followed me through different parts of life.</p>
             </div>
             <div class="ornament-col"></div>
@@ -686,9 +674,6 @@
     </div>
   </div>
 
-  <footer>
-    © 2026 — Kairos Marlowe.
-  </footer>
 
 </div>
 
