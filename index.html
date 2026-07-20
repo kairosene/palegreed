@@ -433,8 +433,12 @@
     .split-grid{ grid-template-columns:1fr 1px 1fr; gap:0 16px; }
   }
   @media (max-width:640px){
-    .split-grid{ grid-template-columns:1fr; gap:0; }
-    .split-grid .ornament-col{ display:none; }
+    .split-grid{ grid-template-columns:1fr 1px 1fr; gap:0 10px; }
+  }
+  @media (max-width:460px){
+    .split-grid{ gap:0 8px; }
+    .split-grid p.body-text{ font-size:12px; line-height:1.25; margin-bottom:14px; }
+    .split-col .plain-photo{ margin-bottom:10px; }
   }
 
   .single-block p.body-text{ max-width:none; }
